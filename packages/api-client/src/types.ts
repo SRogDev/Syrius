@@ -94,44 +94,204 @@ export interface ValidationError {
 
 // Operation map (method + path -> response type).
 export interface ApiOperations {
-  "get_artifact_api_v1_artifacts__artifact_id__get": { method: "get"; path: "/api/v1/artifacts/{artifact_id}"; response: Record<string, unknown> };
-  "seed_tools_api_v1_capabilities_seed_tools_post": { method: "post"; path: "/api/v1/capabilities/seed-tools"; response: Record<string, unknown> };
-  "list_tools_api_v1_capabilities_tools_get": { method: "get"; path: "/api/v1/capabilities/tools"; response: Record<string, unknown>[] };
-  "run_tool_endpoint_api_v1_capabilities_tools__name__run_post": { method: "post"; path: "/api/v1/capabilities/tools/{name}/run"; response: Record<string, unknown> };
-  "list_environments_api_v1_environments_get": { method: "get"; path: "/api/v1/environments"; response: Record<string, unknown>[] };
-  "create_environment_api_v1_environments_post": { method: "post"; path: "/api/v1/environments"; response: Record<string, unknown> };
-  "validate_environment_api_v1_environments_validate_post": { method: "post"; path: "/api/v1/environments/validate"; response: EnvironmentValidationOut };
-  "get_environment_api_v1_environments__env_id__get": { method: "get"; path: "/api/v1/environments/{env_id}"; response: Record<string, unknown> };
-  "get_episode_api_v1_episodes__episode_id__get": { method: "get"; path: "/api/v1/episodes/{episode_id}"; response: Record<string, unknown> };
-  "get_episode_trace_api_v1_episodes__episode_id__trace_get": { method: "get"; path: "/api/v1/episodes/{episode_id}/trace"; response: Record<string, unknown> };
-  "list_evaluation_suites_api_v1_evaluation_suites_get": { method: "get"; path: "/api/v1/evaluation-suites"; response: Record<string, unknown>[] };
-  "get_evaluation_api_v1_evaluations__evaluation_id__get": { method: "get"; path: "/api/v1/evaluations/{evaluation_id}"; response: Record<string, unknown> };
-  "get_evaluation_report_api_v1_evaluations__evaluation_id__report_get": { method: "get"; path: "/api/v1/evaluations/{evaluation_id}/report"; response: Record<string, unknown> };
-  "stream_events_api_v1_events_get": { method: "get"; path: "/api/v1/events"; response: unknown };
-  "create_experiment_api_v1_experiments_post": { method: "post"; path: "/api/v1/experiments"; response: Record<string, unknown> };
-  "get_experiment_api_v1_experiments__experiment_id__get": { method: "get"; path: "/api/v1/experiments/{experiment_id}"; response: Record<string, unknown> };
-  "baseline_experiment_api_v1_experiments__experiment_id__baseline_post": { method: "post"; path: "/api/v1/experiments/{experiment_id}/baseline"; response: Record<string, unknown> };
-  "list_checkpoints_api_v1_experiments__experiment_id__checkpoints_get": { method: "get"; path: "/api/v1/experiments/{experiment_id}/checkpoints"; response: Record<string, unknown>[] };
-  "evaluate_experiment_api_v1_experiments__experiment_id__evaluate_post": { method: "post"; path: "/api/v1/experiments/{experiment_id}/evaluate"; response: Record<string, unknown> };
-  "experiment_events_api_v1_experiments__experiment_id__events_get": { method: "get"; path: "/api/v1/experiments/{experiment_id}/events"; response: unknown };
-  "experiment_metrics_api_v1_experiments__experiment_id__metrics_get": { method: "get"; path: "/api/v1/experiments/{experiment_id}/metrics"; response: MetricsOut };
-  "train_experiment_api_v1_experiments__experiment_id__train_post": { method: "post"; path: "/api/v1/experiments/{experiment_id}/train"; response: Record<string, unknown> };
-  "health_v1_api_v1_health_get": { method: "get"; path: "/api/v1/health"; response: Record<string, string> };
-  "get_job_api_v1_jobs__job_id__get": { method: "get"; path: "/api/v1/jobs/{job_id}"; response: Record<string, unknown> };
-  "cancel_job_endpoint_api_v1_jobs__job_id__cancel_post": { method: "post"; path: "/api/v1/jobs/{job_id}/cancel"; response: Record<string, unknown> };
-  "create_policy_api_v1_policies_post": { method: "post"; path: "/api/v1/policies"; response: Record<string, unknown> };
-  "get_policy_api_v1_policies__policy_id__get": { method: "get"; path: "/api/v1/policies/{policy_id}"; response: Record<string, unknown> };
-  "export_policy_api_v1_policies__policy_id__export_post": { method: "post"; path: "/api/v1/policies/{policy_id}/export"; response: Record<string, unknown> };
-  "list_projects_api_v1_projects_get": { method: "get"; path: "/api/v1/projects"; response: Record<string, unknown>[] };
-  "create_project_api_v1_projects_post": { method: "post"; path: "/api/v1/projects"; response: Record<string, unknown> };
-  "get_project_api_v1_projects__project_id__get": { method: "get"; path: "/api/v1/projects/{project_id}"; response: Record<string, unknown> };
-  "create_specification_api_v1_specifications_post": { method: "post"; path: "/api/v1/specifications"; response: Record<string, unknown> };
-  "get_specification_api_v1_specifications__spec_id__get": { method: "get"; path: "/api/v1/specifications/{spec_id}"; response: Record<string, unknown> };
-  "formalize_specification_api_v1_specifications__spec_id__formalize_post": { method: "post"; path: "/api/v1/specifications/{spec_id}/formalize"; response: Record<string, unknown> };
-  "list_workers_api_v1_workers_get": { method: "get"; path: "/api/v1/workers"; response: Record<string, unknown>[] };
-  "create_workflow_api_v1_workflows_post": { method: "post"; path: "/api/v1/workflows"; response: Record<string, unknown> };
-  "get_workflow_api_v1_workflows__workflow_id__get": { method: "get"; path: "/api/v1/workflows/{workflow_id}"; response: Record<string, unknown> };
-  "cancel_workflow_api_v1_workflows__workflow_id__cancel_post": { method: "post"; path: "/api/v1/workflows/{workflow_id}/cancel"; response: Record<string, unknown> };
-  "run_workflow_api_v1_workflows__workflow_id__run_post": { method: "post"; path: "/api/v1/workflows/{workflow_id}/run"; response: Record<string, unknown> };
-  "health_health_get": { method: "get"; path: "/health"; response: Record<string, string> };
+  get_artifact_api_v1_artifacts__artifact_id__get: {
+    method: 'get';
+    path: '/api/v1/artifacts/{artifact_id}';
+    response: Record<string, unknown>;
+  };
+  seed_tools_api_v1_capabilities_seed_tools_post: {
+    method: 'post';
+    path: '/api/v1/capabilities/seed-tools';
+    response: Record<string, unknown>;
+  };
+  list_tools_api_v1_capabilities_tools_get: {
+    method: 'get';
+    path: '/api/v1/capabilities/tools';
+    response: Record<string, unknown>[];
+  };
+  run_tool_endpoint_api_v1_capabilities_tools__name__run_post: {
+    method: 'post';
+    path: '/api/v1/capabilities/tools/{name}/run';
+    response: Record<string, unknown>;
+  };
+  list_environments_api_v1_environments_get: {
+    method: 'get';
+    path: '/api/v1/environments';
+    response: Record<string, unknown>[];
+  };
+  create_environment_api_v1_environments_post: {
+    method: 'post';
+    path: '/api/v1/environments';
+    response: Record<string, unknown>;
+  };
+  validate_environment_api_v1_environments_validate_post: {
+    method: 'post';
+    path: '/api/v1/environments/validate';
+    response: EnvironmentValidationOut;
+  };
+  get_environment_api_v1_environments__env_id__get: {
+    method: 'get';
+    path: '/api/v1/environments/{env_id}';
+    response: Record<string, unknown>;
+  };
+  get_episode_api_v1_episodes__episode_id__get: {
+    method: 'get';
+    path: '/api/v1/episodes/{episode_id}';
+    response: Record<string, unknown>;
+  };
+  get_episode_trace_api_v1_episodes__episode_id__trace_get: {
+    method: 'get';
+    path: '/api/v1/episodes/{episode_id}/trace';
+    response: Record<string, unknown>;
+  };
+  list_evaluation_suites_api_v1_evaluation_suites_get: {
+    method: 'get';
+    path: '/api/v1/evaluation-suites';
+    response: Record<string, unknown>[];
+  };
+  get_evaluation_api_v1_evaluations__evaluation_id__get: {
+    method: 'get';
+    path: '/api/v1/evaluations/{evaluation_id}';
+    response: Record<string, unknown>;
+  };
+  get_evaluation_report_api_v1_evaluations__evaluation_id__report_get: {
+    method: 'get';
+    path: '/api/v1/evaluations/{evaluation_id}/report';
+    response: Record<string, unknown>;
+  };
+  stream_events_api_v1_events_get: {
+    method: 'get';
+    path: '/api/v1/events';
+    response: unknown;
+  };
+  create_experiment_api_v1_experiments_post: {
+    method: 'post';
+    path: '/api/v1/experiments';
+    response: Record<string, unknown>;
+  };
+  get_experiment_api_v1_experiments__experiment_id__get: {
+    method: 'get';
+    path: '/api/v1/experiments/{experiment_id}';
+    response: Record<string, unknown>;
+  };
+  baseline_experiment_api_v1_experiments__experiment_id__baseline_post: {
+    method: 'post';
+    path: '/api/v1/experiments/{experiment_id}/baseline';
+    response: Record<string, unknown>;
+  };
+  list_checkpoints_api_v1_experiments__experiment_id__checkpoints_get: {
+    method: 'get';
+    path: '/api/v1/experiments/{experiment_id}/checkpoints';
+    response: Record<string, unknown>[];
+  };
+  evaluate_experiment_api_v1_experiments__experiment_id__evaluate_post: {
+    method: 'post';
+    path: '/api/v1/experiments/{experiment_id}/evaluate';
+    response: Record<string, unknown>;
+  };
+  experiment_events_api_v1_experiments__experiment_id__events_get: {
+    method: 'get';
+    path: '/api/v1/experiments/{experiment_id}/events';
+    response: unknown;
+  };
+  experiment_metrics_api_v1_experiments__experiment_id__metrics_get: {
+    method: 'get';
+    path: '/api/v1/experiments/{experiment_id}/metrics';
+    response: MetricsOut;
+  };
+  train_experiment_api_v1_experiments__experiment_id__train_post: {
+    method: 'post';
+    path: '/api/v1/experiments/{experiment_id}/train';
+    response: Record<string, unknown>;
+  };
+  health_v1_api_v1_health_get: {
+    method: 'get';
+    path: '/api/v1/health';
+    response: Record<string, string>;
+  };
+  get_job_api_v1_jobs__job_id__get: {
+    method: 'get';
+    path: '/api/v1/jobs/{job_id}';
+    response: Record<string, unknown>;
+  };
+  cancel_job_endpoint_api_v1_jobs__job_id__cancel_post: {
+    method: 'post';
+    path: '/api/v1/jobs/{job_id}/cancel';
+    response: Record<string, unknown>;
+  };
+  create_policy_api_v1_policies_post: {
+    method: 'post';
+    path: '/api/v1/policies';
+    response: Record<string, unknown>;
+  };
+  get_policy_api_v1_policies__policy_id__get: {
+    method: 'get';
+    path: '/api/v1/policies/{policy_id}';
+    response: Record<string, unknown>;
+  };
+  export_policy_api_v1_policies__policy_id__export_post: {
+    method: 'post';
+    path: '/api/v1/policies/{policy_id}/export';
+    response: Record<string, unknown>;
+  };
+  list_projects_api_v1_projects_get: {
+    method: 'get';
+    path: '/api/v1/projects';
+    response: Record<string, unknown>[];
+  };
+  create_project_api_v1_projects_post: {
+    method: 'post';
+    path: '/api/v1/projects';
+    response: Record<string, unknown>;
+  };
+  get_project_api_v1_projects__project_id__get: {
+    method: 'get';
+    path: '/api/v1/projects/{project_id}';
+    response: Record<string, unknown>;
+  };
+  create_specification_api_v1_specifications_post: {
+    method: 'post';
+    path: '/api/v1/specifications';
+    response: Record<string, unknown>;
+  };
+  get_specification_api_v1_specifications__spec_id__get: {
+    method: 'get';
+    path: '/api/v1/specifications/{spec_id}';
+    response: Record<string, unknown>;
+  };
+  formalize_specification_api_v1_specifications__spec_id__formalize_post: {
+    method: 'post';
+    path: '/api/v1/specifications/{spec_id}/formalize';
+    response: Record<string, unknown>;
+  };
+  list_workers_api_v1_workers_get: {
+    method: 'get';
+    path: '/api/v1/workers';
+    response: Record<string, unknown>[];
+  };
+  create_workflow_api_v1_workflows_post: {
+    method: 'post';
+    path: '/api/v1/workflows';
+    response: Record<string, unknown>;
+  };
+  get_workflow_api_v1_workflows__workflow_id__get: {
+    method: 'get';
+    path: '/api/v1/workflows/{workflow_id}';
+    response: Record<string, unknown>;
+  };
+  cancel_workflow_api_v1_workflows__workflow_id__cancel_post: {
+    method: 'post';
+    path: '/api/v1/workflows/{workflow_id}/cancel';
+    response: Record<string, unknown>;
+  };
+  run_workflow_api_v1_workflows__workflow_id__run_post: {
+    method: 'post';
+    path: '/api/v1/workflows/{workflow_id}/run';
+    response: Record<string, unknown>;
+  };
+  health_health_get: {
+    method: 'get';
+    path: '/health';
+    response: Record<string, string>;
+  };
 }

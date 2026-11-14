@@ -89,7 +89,11 @@ def generate(openapi: dict) -> str:
             app_json = content.get("application/json", {})
             resp_schema = app_json.get("schema", {})
             resp_type = ts_type(resp_schema, schemas) if resp_schema else "unknown"
-            lines.append(f'  "{op_id}": {{ method: "{method}"; path: "{path}"; response: {resp_type} }};')
+            lines.append(f"  {op_id}: {{")
+            lines.append(f"    method: '{method}';")
+            lines.append(f"    path: '{path}';")
+            lines.append(f"    response: {resp_type};")
+            lines.append("  };")
     lines.append("}")
     lines.append("")
     return "\n".join(lines)

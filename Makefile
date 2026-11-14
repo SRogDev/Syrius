@@ -2,7 +2,10 @@
 # except the Docker-dependent ones (no Docker daemon in the sandbox);
 # see IMPLEMENTATION_STATUS.md.
 
-.PHONY: install up down migrate dev-api dev-web test lint check
+.PHONY: install up down migrate dev-api dev-web test lint check slice
+
+slice: ## Run the real CartPole acceptance slice (SQLite, worker CLI)
+	uv run --project apps/api python scripts/run_cartpole_slice.py
 
 install: ## Install Python (uv) and JS (pnpm) dependencies
 	uv sync

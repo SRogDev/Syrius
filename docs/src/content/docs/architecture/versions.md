@@ -73,18 +73,22 @@ with the first real table view (Phase 1+).
 
 ## Python
 
-| Package           | Pinned  |
-| ----------------- | ------- |
-| fastapi           | 0.163.0 |
-| pydantic          | 2.14.3  |
-| pydantic-settings | 2.16.3  |
-| sqlalchemy        | 2.1.8   |
-| alembic           | 1.20.1  |
-| psycopg[binary]   | 3.3.9   |
-| uvicorn           | 0.54.0  |
-| httpx             | 0.28.1  |
-| pytest            | 9.2.0   |
-| ruff              | 0.17.5  |
+| Package           | Pinned     |
+| ----------------- | ---------- |
+| fastapi           | 0.163.0    |
+| pydantic          | 2.14.3     |
+| pydantic-settings | 2.16.3     |
+| sqlalchemy        | 2.1.8      |
+| alembic           | 1.20.1     |
+| psycopg[binary]   | 3.3.9      |
+| uvicorn           | 0.54.0     |
+| httpx             | 0.28.1     |
+| gymnasium         | 1.4.0      |
+| stable-baselines3 | 2.9.2      |
+| torch             | 2.15.0+cpu |
+| langgraph         | 0.6.8      |
+| pytest            | 9.2.0      |
+| ruff              | 0.17.5     |
 
 ### Build backend note
 
@@ -95,15 +99,22 @@ from the index through the egress proxy, while plain package resolution
 worked. `uv_build` needs no download. If a future environment needs
 hatchling, that is a one-line change per `pyproject.toml`.
 
-### RL libraries — verified compatible, NOT installed
+### RL libraries — installed in Phases 1–6
 
-| Package           | Latest verified | Status                                               |
-| ----------------- | --------------- | ---------------------------------------------------- |
-| gymnasium         | 1.4.0           | Compatible with Python 3.12; install in Phase 1      |
-| stable-baselines3 | 2.9.2           | Compatible with Gymnasium 1.x / Python 3.12; Phase 1 |
+| Package           | Pinned     | Status                                            |
+| ----------------- | ---------- | ------------------------------------------------- |
+| gymnasium         | 1.4.0      | Installed; CartPole-v1 validated via `check_env`  |
+| stable-baselines3 | 2.9.2      | Installed; PPO trained 20,000 steps on CPU        |
+| torch             | 2.15.0+cpu | CPU build from the PyTorch CPU index (see note)   |
+| langgraph         | 0.6.8      | Installed; StateGraph + MemorySaver for workflows |
 
-No RL code exists in Phase 0, so no RL packages are installed. Installing
-them now would be speculative scope.
+Torch CPU note: the `[tool.uv.sources] torch = { index =
+"pytorch-cpu" }` entry only takes effect when torch is a **direct**
+dependency — as a transitive SB3 dependency uv kept resolving the
+CUDA build from PyPI (verified with an isolated test project). The
+fix is the explicit `"torch==2.15.0"` pin in
+`apps/api/pyproject.toml`. LangGraph 0.6.9 is yanked on PyPI, hence
+the 0.6.8 pin.
 
 ## Docs
 

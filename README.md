@@ -6,12 +6,19 @@
 and reproducible reinforcement-learning pipelines — built in the open, one
 phase at a time.
 
-> **Status: Phase 0 — Repository Foundation (v0.1).** The monorepo
-> skeleton, the API health service, the worker heartbeat CLI, PostgreSQL
-> - Alembic, the web SPA shell and CI are in place and tested. **No RL
-> training, projects, runs, departments or studios exist yet** — those are
-> Phases 1–7. See [IMPLEMENTATION_STATUS.md](IMPLEMENTATION_STATUS.md)
-> for the honest per-item state.
+> **Status: Phases 1–6 — Backend vertical slice (v0.1).** The
+> monorepo skeleton, the API health service, the worker heartbeat CLI,
+> PostgreSQL + Alembic, the web SPA shell and CI are in place, and
+> the backend now runs a real CartPole slice end to end: project →
+> spec → environment → PPO training (20,000 steps) → independent
+> evaluation → policy export, all through the job queue and the
+> worker. **Measured: baseline mean 23.35, PPO evaluation mean
+> 498.70/500, success rate 0.95 (19/20).** The Four Studios
+> (Phase 5, frontend) and hardening (Phase 7) are not built yet. See
+> [IMPLEMENTATION_STATUS.md](IMPLEMENTATION_STATUS.md) for the honest
+> per-item state and
+> [docs/evidence/cartpole-slice-2026-11-14.md](docs/evidence/cartpole-slice-2026-11-14.md)
+> for the measured run.
 
 ## Quickstart
 
@@ -38,6 +45,17 @@ Verify everything:
 make check       # ruff + Biome lint, pytest, web production build
 ```
 
+Run the real CartPole acceptance slice (no Docker needed — SQLite
+local DB, real worker CLI, PPO 20,000 steps on CPU, ~2 minutes):
+
+```sh
+make slice
+```
+
+It writes its measured report to
+`var/results/cartpole-slice-<timestamp>/report.md` (gitignored
+runtime dir); the committed evidence copy lives in `docs/evidence/`.
+
 Full install steps live in the docs: `docs/src/content/docs/getting-started.md`
 (or run `pnpm --filter syrius-docs dev`).
 
@@ -46,9 +64,9 @@ Full install steps live in the docs: `docs/src/content/docs/getting-started.md`
 | Layer    | Technology                                                                                                  |
 | -------- | ----------------------------------------------------------------------------------------------------------- |
 | Web      | TanStack Start 1.169.5 (SPA mode), React 19, TanStack Router/Query, Tailwind v4, TypeScript 6 strict, Biome |
-| API      | Python 3.12, FastAPI, Pydantic, SQLAlchemy, Alembic, uvicorn                                                |
-| Worker   | Python 3.12, SQLAlchemy                                                                                     |
-| Database | PostgreSQL 16 (self-managed Docker Compose; no Supabase)                                                    |
+| API      | Python 3.12, FastAPI, Pydantic, SQLAlchemy, Alembic, uvicorn, Gymnasium, Stable-Baselines3, LangGraph       |
+| Worker   | Python 3.12, SQLAlchemy, Gymnasium, Stable-Baselines3                                                       |
+| Database | PostgreSQL 16 (self-managed Docker Compose; no Supabase) — SQLite for local dev/tests                       |
 | Docs     | Astro Starlight                                                                                             |
 | CI       | GitHub Actions (ruff, Biome, pytest, web + docs builds)                                                     |
 
@@ -56,9 +74,11 @@ Exact pinned versions — verified against the live registries on
 2026-11-14 — are recorded in
 [`docs/architecture/versions.md`](docs/src/content/docs/architecture/versions.md).
 
-RL libraries (Gymnasium 1.4.0, Stable-Baselines3 2.9.2) were verified
-compatible with Python 3.12 but are **not installed** in Phase 0: no RL
-code exists yet. They land with Phase 1.
+RL libraries (Gymnasium 1.4.0, Stable-Baselines3 2.9.2, torch 2.15.0+cpu,
+LangGraph 0.6.8) are installed since Phases 1–6. Torch is the CPU build
+from the PyTorch CPU index — the per-package index source only applies
+when torch is a direct dependency (verified the hard way). Pinned
+versions live in `docs/architecture/versions.md`.
 
 ## Structure
 
@@ -66,18 +86,17 @@ code exists yet. They land with Phase 1.
 syrius/
 ├── apps/
 │   ├── web/        TanStack Start SPA (/, /projects, /projects/$projectId)
-│   ├── api/        FastAPI — GET /health, GET /api/v1/health + Alembic
-│   └── worker/     status / heartbeat CLI (DB-backed registration)
-├── docs/           Astro Starlight documentation
+│   ├── api/        FastAPI — health + full /api/v1/ routes + Alembic
+│   └── worker/     status / heartbeat CLI + run job loop
+├── packages/
+│   └── api-client/ OpenAPI-generated TypeScript types
+├── scripts/        CartPole acceptance run + API client generator
+├── docs/           Astro Starlight documentation (+ evidence/)
 ├── infrastructure/ Dockerfiles + docker-compose.yml
 ├── tests/          Reserved for future end-to-end tests
-├── Makefile        install / dev / test / lint / migrate / up / down
+├── Makefile        install / dev / test / lint / migrate / up / down / slice
 └── IMPLEMENTATION_STATUS.md   Honest per-item phase tracking
 ```
-
-There is no `packages/` directory in Phase 0: no shared package contains
-real code yet. API client types generated from the API's OpenAPI schema
-will create it when Phase 1 adds real routes.
 
 ## Design
 
@@ -88,15 +107,24 @@ stacks using local/system fallbacks. Google Fonts is never fetched at
 build time. Dark industrial, precise, dense but readable; no neon, no
 generic SaaS dashboard look.
 
-## What Phase 0 does — and does not do
+## What Phases 1–6 do — and do not do
 
-**Does:** monorepo skeleton; API health with real DB reachability;
-worker registration + heartbeat; PostgreSQL + Alembic baseline; web SPA
-shell with live health panel; Starlight docs; CI.
+**Do:** everything in Phase 0, plus the full backend slice: projects,
+RL problem specs (Architect), Gymnasium environments (CartPole-v1
+validated), a Postgres-backed job queue with a real worker loop, PPO
+training via SB3 (never inside a request handler), SSE live progress,
+independent evaluation with success = full 500-step episodes, policy
+packaging/export with a reproducibility manifest and independent
+package validation, 71 department tool definitions, LangGraph training
+workflows, and OpenAPI-generated TS client types. Measured on
+2026-11-14: random baseline mean 23.35; PPO (20,000 steps, seed 42)
+evaluation mean 498.70/500, success 0.95 (19/20); export validated
+independently (5 episodes, seed 1000: mean 492.80, success 0.80).
 
-**Does not do:** projects, runs, environments, training, departments,
-studios, auth, BYOK, payments, deployments. Nothing is mocked to look
-finished: skeleton pages say "not yet implemented" where that is true.
+**Do not do:** the Four Studios (Phase 5 frontend), auth, paid
+compute, production deploys, or hardening (Phase 7). Nothing is
+mocked to look finished: tools and routes that cannot run for real
+say `not_implemented` with the reason.
 
 ## Contributing
 
