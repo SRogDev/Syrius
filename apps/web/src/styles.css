@@ -1,0 +1,49 @@
+/* Syrius styles — Tailwind v4.
+ * Design system: HUD / Sci-Fi FUI (ui-ux-pro-max), adapted to the Syrius
+ * palette. Fonts are Exo + Roboto Mono with local/system fallbacks only:
+ * Google Fonts is NOT fetched at build time (blocked by the sandbox
+ * egress proxy and an unnecessary runtime dependency).
+ */
+@import "tailwindcss";
+
+@theme {
+  --color-bg: #111318;
+  --color-surface: #20242c;
+  --color-platinum: #bfc5ce;
+  --color-highlight: #e7ebf2;
+  --color-muted: #7d8593;
+  --color-line: #2e333e;
+
+  --font-sans: "Exo", "Segoe UI", system-ui, -apple-system, sans-serif;
+  --font-display: "Exo", "Segoe UI", system-ui, sans-serif;
+  --font-mono: "Roboto Mono", ui-monospace, "SF Mono", Menlo, Consolas,
+    monospace;
+}
+
+@layer base {
+  html {
+    color-scheme: dark;
+  }
+
+  body {
+    background-color: var(--color-bg);
+    color: var(--color-highlight);
+  }
+
+  ::selection {
+    background: var(--color-platinum);
+    color: var(--color-bg);
+  }
+}
+
+@layer components {
+  /* HUD panel: flat surface, hairline border, square corners. No neon,
+   * no glow — precise and dense, per the Syrius brief. */
+  .hud-panel {
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-line);
+  }
+}
+
+/* Reduced-motion handling is deferred until the app defines animations;
+ * Phase 0 has none. */
