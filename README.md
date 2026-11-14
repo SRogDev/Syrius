@@ -6,15 +6,23 @@
 and reproducible reinforcement-learning pipelines — built in the open, one
 phase at a time.
 
-> **Status: Phases 1–6 — Backend vertical slice (v0.1).** The
-> monorepo skeleton, the API health service, the worker heartbeat CLI,
-> PostgreSQL + Alembic, the web SPA shell and CI are in place, and
-> the backend now runs a real CartPole slice end to end: project →
-> spec → environment → PPO training (20,000 steps) → independent
-> evaluation → policy export, all through the job queue and the
-> worker. **Measured: baseline mean 23.35, PPO evaluation mean
-> 498.70/500, success rate 0.95 (19/20).** The Four Studios
-> (Phase 5, frontend) and hardening (Phase 7) are not built yet. See
+> **Status: Phases 1–6 — Backend vertical slice (v0.1) + Phase 5 Four
+> Studios.** The monorepo skeleton, the API health service, the worker
+> heartbeat CLI, PostgreSQL + Alembic, the web SPA shell and CI are in
+> place, and the backend now runs a real CartPole slice end to end:
+> project → spec → environment → PPO training (20,000 steps) →
+> independent evaluation → policy export, all through the job queue and
+> the worker. **Measured: baseline mean 23.35, PPO evaluation mean
+> 498.70/500, success rate 0.95 (19/20).** The Four Studios are built
+> on top of that API: Project Studio (spec, departments from the tool
+> registry, approvals, audit timeline), Environment Studio (canvas
+> CartPole playback from recorded episode traces), Experiment Studio
+> (live SSE progress + ECharts curves, checkpoints, comparison) and
+> Evaluation Studio (report.md/json, baseline/run comparison) plus a
+> Deliverables tab (policy manifest + export). Where the backend lacks
+> a list endpoint or a feature (training resume, artifact download,
+> logs), the UI says so honestly instead of faking it. Hardening
+> (Phase 7) is not built yet. See
 > [IMPLEMENTATION_STATUS.md](IMPLEMENTATION_STATUS.md) for the honest
 > per-item state and
 > [docs/evidence/cartpole-slice-2026-11-14.md](docs/evidence/cartpole-slice-2026-11-14.md)
@@ -85,7 +93,9 @@ versions live in `docs/architecture/versions.md`.
 ```text
 syrius/
 ├── apps/
-│   ├── web/        TanStack Start SPA (/, /projects, /projects/$projectId)
+│   ├── web/        TanStack Start SPA (/, /projects, /projects/$projectId with
+│   │               the Four Studios, /experiments/$id, /episodes/$id,
+│   │               /evaluations/$id)
 │   ├── api/        FastAPI — health + full /api/v1/ routes + Alembic
 │   └── worker/     status / heartbeat CLI + run job loop
 ├── packages/
@@ -121,10 +131,13 @@ workflows, and OpenAPI-generated TS client types. Measured on
 evaluation mean 498.70/500, success 0.95 (19/20); export validated
 independently (5 episodes, seed 1000: mean 492.80, success 0.80).
 
-**Do not do:** the Four Studios (Phase 5 frontend), auth, paid
-compute, production deploys, or hardening (Phase 7). Nothing is
-mocked to look finished: tools and routes that cannot run for real
-say `not_implemented` with the reason.
+**Do not do:** auth, paid compute, production deploys, or hardening
+(Phase 7). The Studios do not fake what the backend lacks: there are
+no list endpoints for experiments, episodes or evaluations (objects
+open by id), no training resume, no artifact download, and no
+training-history endpoint, so the reward curve plots live-observed
+points only. Nothing is mocked to look finished: tools and routes
+that cannot run for real say `not_implemented` with the reason.
 
 ## Contributing
 

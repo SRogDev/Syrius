@@ -37,12 +37,12 @@ package, landed with Phases 1–6.
 
 ## Services
 
-| Service  | Entry point                             | Responsibility (Phases 0–6)                                                   |
-| -------- | --------------------------------------- | ----------------------------------------------------------------------------- |
-| web      | `apps/web`                              | SPA shell, `/` and `/projects` routes, live API health panel                  |
-| api      | `apps/api/src/syrius_api/main.py`       | Health + full `/api/v1/` (projects, specs, envs, experiments, eval, policies) |
-| worker   | `apps/worker/src/syrius_worker/main.py` | `status` / `heartbeat` CLI + `run` job loop (train/baseline/evaluate/export)  |
-| postgres | `docker-compose.yml`                    | PostgreSQL 16, named volume `syrius_pgdata`                                   |
+| Service  | Entry point                             | Responsibility (Phases 0–6)                                                                                                                                                                                           |
+| -------- | --------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| web      | `apps/web`                              | SPA shell + Four Studios: Project (`/projects/$projectId?studio=`), Environment (`/episodes/$episodeId`), Experiment (`/experiments/$experimentId`), Evaluation (`/evaluations/$evaluationId`), live API health panel |
+| api      | `apps/api/src/syrius_api/main.py`       | Health + full `/api/v1/` (projects, specs, envs, experiments, eval, policies)                                                                                                                                         |
+| worker   | `apps/worker/src/syrius_worker/main.py` | `status` / `heartbeat` CLI + `run` job loop (train/baseline/evaluate/export)                                                                                                                                          |
+| postgres | `docker-compose.yml`                    | PostgreSQL 16, named volume `syrius_pgdata`                                                                                                                                                                           |
 
 ## Backend modules (Phases 1–6)
 
@@ -67,6 +67,9 @@ never trains inside a request handler.
 
 ## What is not built yet
 
-The Four Studios (Phase 5, frontend), auth, and hardening (Phase 7)
-belong to later phases. See `IMPLEMENTATION_STATUS.md` at the repo root
-for the honest per-item state.
+Auth and hardening (Phase 7) belong to later phases. The Studios
+surface the backend's honest gaps in the UI (no list endpoints for
+experiments/episodes/evaluations, no training resume, no artifact
+download, no training-history endpoint). See
+`IMPLEMENTATION_STATUS.md` at the repo root for the honest per-item
+state.

@@ -190,7 +190,9 @@ function ExperimentStudio() {
         ? [{ step: liveMetrics.current_step ?? 0, reward: liveReward }]
         : [];
 
-  const otherMetrics = compareMetrics.data?.metrics as Record<string, unknown> | undefined;
+  const otherMetrics = compareMetrics.data?.metrics as
+    | Record<string, unknown>
+    | undefined;
   const otherReward = otherMetrics?.last_mean_episode_reward;
 
   if (experiment.isPending) return <Loading label="Loading experiment…" />;
@@ -403,7 +405,9 @@ function ExperimentStudio() {
               />
               <Stat
                 label="Other last mean reward"
-                value={typeof otherReward === 'number' ? otherReward.toFixed(2) : '—'}
+                value={
+                  typeof otherReward === 'number' ? otherReward.toFixed(2) : '—'
+                }
               />
             </dl>
           ) : null}

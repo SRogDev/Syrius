@@ -71,6 +71,24 @@ and adopting it is a deliberate future decision, not a silent bump.
 installing unused dependencies violates the minimal-scope rule. They land
 with the first real table view (Phase 1+).
 
+### Phase 5 web libraries (verified 2026-11-14)
+
+| Package                   | Pinned | Used for                                                   |
+| ------------------------- | ------ | ---------------------------------------------------------- |
+| echarts                   | 6.1.0  | Training reward curves (Experiment Studio)                 |
+| echarts-for-react         | 3.0.6  | React wrapper for ECharts                                  |
+| lucide-react              | 1.73.0 | SVG icons only (Studio tabs, player controls)              |
+| vitest                    | 5.1.0  | Frontend tests (`pnpm --filter syrius-web test`, 25 tests) |
+| @testing-library/react    | 16.3.3 | Component tests                                            |
+| @testing-library/jest-dom | 7.0.1  | DOM assertions                                             |
+| jsdom                     | 31.0.1 | Vitest environment                                         |
+
+`@tanstack/react-table` / `@tanstack/react-virtual` remain **not
+installed** in Phase 5: the backend has no list endpoint that returns
+a long list (experiments, episodes and evaluations open by id), so no
+table/virtualized view exists yet. No global state library was added;
+important navigation/selection state lives in the URL (`?studio=`).
+
 ## Python
 
 | Package           | Pinned     |
