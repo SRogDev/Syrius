@@ -4,7 +4,10 @@
  * No mock data: every function hits the live API and throws ApiError
  * (server detail) or a plain Error (unreachable) on failure. */
 
-import type { MetricsOut, TrainingConfig } from '../../../packages/api-client/src/types';
+import type {
+  MetricsOut,
+  TrainingConfig,
+} from '../../../../packages/api-client/src/types';
 
 export type { MetricsOut, TrainingConfig };
 
@@ -265,7 +268,9 @@ export async function formalizeSpecification(
   specId: string,
   gymId = 'CartPole-v1',
 ): Promise<Specification> {
-  return post<Specification>(`/api/v1/specifications/${specId}/formalize`, { gym_id: gymId });
+  return post<Specification>(`/api/v1/specifications/${specId}/formalize`, {
+    gym_id: gymId,
+  });
 }
 
 // --- Environments (Environment Factory) -------------------------------------
@@ -337,7 +342,9 @@ export async function trainExperiment(
   experimentId: string,
   config?: TrainingConfig | null,
 ): Promise<TrainResponse> {
-  return post<TrainResponse>(`/api/v1/experiments/${experimentId}/train`, { config: config ?? null });
+  return post<TrainResponse>(`/api/v1/experiments/${experimentId}/train`, {
+    config: config ?? null,
+  });
 }
 
 /** Baseline run (random policy). Returns the enqueued job. */
@@ -346,16 +353,26 @@ export async function baselineExperiment(
   episodes = 20,
   seed = 0,
 ): Promise<{ experiment_id: string; job_id: string; status: string }> {
-  return post(`/api/v1/experiments/${experimentId}/baseline`, { episodes, seed });
+  return post(`/api/v1/experiments/${experimentId}/baseline`, {
+    episodes,
+    seed,
+  });
 }
 
-export async function getExperimentMetrics(experimentId: string): Promise<MetricsOut> {
+export async function getExperimentMetrics(
+  experimentId: string,
+): Promise<MetricsOut> {
   return apiFetch<MetricsOut>(`/api/v1/experiments/${experimentId}/metrics`);
 }
 
 export async function evaluateExperiment(
   experimentId: string,
-  input: { policy_id?: string | null; episodes?: number; seed?: number; deterministic?: boolean },
+  input: {
+    policy_id?: string | null;
+    episodes?: number;
+    seed?: number;
+    deterministic?: boolean;
+  },
 ): Promise<{ evaluation_run_id: string; job_id: string; status: string }> {
   return post(`/api/v1/experiments/${experimentId}/evaluate`, {
     policy_id: input.policy_id ?? null,
@@ -365,20 +382,30 @@ export async function evaluateExperiment(
   });
 }
 
-export async function listCheckpoints(experimentId: string): Promise<Checkpoint[]> {
-  return apiFetch<Checkpoint[]>(`/api/v1/experiments/${experimentId}/checkpoints`);
+export async function listCheckpoints(
+  experimentId: string,
+): Promise<Checkpoint[]> {
+  return apiFetch<Checkpoint[]>(
+    `/api/v1/experiments/${experimentId}/checkpoints`,
+  );
 }
 
 // --- Evaluations ------------------------------------------------------------
 
 /** NOTE: the backend has no list-evaluations endpoint; evaluation runs
  * are opened by id (from an evaluate response or a pasted id). */
-export async function getEvaluation(evaluationId: string): Promise<EvaluationRun> {
+export async function getEvaluation(
+  evaluationId: string,
+): Promise<EvaluationRun> {
   return apiFetch<EvaluationRun>(`/api/v1/evaluations/${evaluationId}`);
 }
 
-export async function getEvaluationReport(evaluationId: string): Promise<EvaluationReport> {
-  return apiFetch<EvaluationReport>(`/api/v1/evaluations/${evaluationId}/report`);
+export async function getEvaluationReport(
+  evaluationId: string,
+): Promise<EvaluationReport> {
+  return apiFetch<EvaluationReport>(
+    `/api/v1/evaluations/${evaluationId}/report`,
+  );
 }
 
 export async function listEvaluationSuites(): Promise<EvaluationSuite[]> {
@@ -393,7 +420,9 @@ export async function getEpisode(episodeId: string): Promise<Episode> {
   return apiFetch<Episode>(`/api/v1/episodes/${episodeId}`);
 }
 
-export async function getEpisodeTrace(episodeId: string): Promise<EpisodeTrace> {
+export async function getEpisodeTrace(
+  episodeId: string,
+): Promise<EpisodeTrace> {
   return apiFetch<EpisodeTrace>(`/api/v1/episodes/${episodeId}/trace`);
 }
 
@@ -402,7 +431,12 @@ export async function getEpisodeTrace(episodeId: string): Promise<EpisodeTrace> 
 export async function recordEpisode(
   environmentId: string,
   seed = 0,
-): Promise<{ episode_id: string; length: number; reward: number; trace_artifact_id: string }> {
+): Promise<{
+  episode_id: string;
+  length: number;
+  reward: number;
+  trace_artifact_id: string;
+}> {
   return runTool('RecordEpisode', { environment_id: environmentId, seed });
 }
 
@@ -456,7 +490,10 @@ export async function runTool<T = Record<string, unknown>>(
   name: string,
   payload: Record<string, unknown>,
 ): Promise<T> {
-  return post<T>(`/api/v1/capabilities/tools/${encodeURIComponent(name)}/run`, payload);
+  return post<T>(
+    `/api/v1/capabilities/tools/${encodeURIComponent(name)}/run`,
+    payload,
+  );
 }
 
 // --- Workers / events -------------------------------------------------------
@@ -474,7 +511,9 @@ export async function fetchAuditEvents(): Promise<AuditEvent[]> {
     const response = await fetch(`${apiBase()}/api/v1/events`);
     text = await response.text();
   } catch {
-    throw new Error('API unreachable — is the API running on :8000? (/api/v1/events)');
+    throw new Error(
+      'API unreachable — is the API running on :8000? (/api/v1/events)',
+    );
   }
   const events: AuditEvent[] = [];
   for (const line of text.split('\n')) {
@@ -496,7 +535,13 @@ export async function createWorkflow(input: {
   name?: string;
   kind?: string;
   definition?: Record<string, unknown>;
-}): Promise<{ id: string; project_id: string; name: string; kind: string; status: string }> {
+}): Promise<{
+  id: string;
+  project_id: string;
+  name: string;
+  kind: string;
+  status: string;
+}> {
   return post('/api/v1/workflows', {
     project_id: input.project_id,
     name: input.name ?? 'training-workflow',

@@ -17,7 +17,11 @@ interface Props {
   height?: number;
 }
 
-export default function CartPoleCanvas({ observation, width = 640, height = 260 }: Props) {
+export default function CartPoleCanvas({
+  observation,
+  width = 640,
+  height = 260,
+}: Props) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {

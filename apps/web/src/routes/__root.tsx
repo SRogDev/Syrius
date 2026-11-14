@@ -39,8 +39,8 @@ function RootDocument({ children }: { children: React.ReactNode }) {
         </main>
         <footer className="border-t border-line py-6">
           <p className="mx-auto max-w-6xl px-4 font-mono text-xs tracking-wider text-muted">
-            SYRIUS v0.1 — PHASE 0 · REPOSITORY FOUNDATION · NOTHING BEYOND PHASE
-            0 IS BUILT YET
+            SYRIUS v0.1 — PHASE 5 · FOUR STUDIOS · BACKEND VERTICAL SLICE
+            MEASURED 2026-11-14
           </p>
         </footer>
         <Scripts />

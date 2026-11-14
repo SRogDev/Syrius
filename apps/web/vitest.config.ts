@@ -1,6 +1,6 @@
 import { fileURLToPath } from 'node:url';
-import { defineConfig } from 'vitest/config';
 import react from '@vitejs/plugin-react';
+import { defineConfig } from 'vitest/config';
 
 // Vitest-only config (the app itself builds through vite.config.ts with
 // the TanStack Start plugin). Alias `#/*` matches tsconfig / package.json.
@@ -9,7 +9,10 @@ const srcDir = fileURLToPath(new URL('./src', import.meta.url));
 export default defineConfig({
   plugins: [react()],
   resolve: {
-    alias: [{ find: /^#\/(.*)/, replacement: `${srcDir}/$1` }],
+    alias: [
+      { find: /^#\/(.*)/, replacement: `${srcDir}/$1` },
+      { find: /^@\/(.*)/, replacement: `${srcDir}/$1` },
+    ],
   },
   test: {
     environment: 'jsdom',

@@ -14,7 +14,7 @@ export default function Header() {
             SYRIUS
           </span>
           <span className="hidden rounded-none border border-line px-2 py-0.5 font-mono text-[10px] uppercase tracking-widest text-platinum sm:inline">
-            Phase 0
+            Phase 5
           </span>
         </Link>
         <nav className="flex items-center gap-6 font-mono text-xs uppercase tracking-widest">

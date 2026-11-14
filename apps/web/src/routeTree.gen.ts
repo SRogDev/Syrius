@@ -11,6 +11,9 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ProjectsRouteImport } from './routes/projects'
+import { Route as EpisodesEpisodeIdRouteImport } from './routes/episodes/$episodeId'
+import { Route as EvaluationsEvaluationIdRouteImport } from './routes/evaluations/$evaluationId'
+import { Route as ExperimentsExperimentIdRouteImport } from './routes/experiments/$experimentId'
 import { Route as ProjectsProjectIdRouteImport } from './routes/projects/$projectId'
 
 const IndexRoute = IndexRouteImport.update({
@@ -23,6 +26,21 @@ const ProjectsRoute = ProjectsRouteImport.update({
   path: '/projects',
   getParentRoute: () => rootRouteImport,
 } as any)
+const EpisodesEpisodeIdRoute = EpisodesEpisodeIdRouteImport.update({
+  id: '/episodes/$episodeId',
+  path: '/episodes/$episodeId',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EvaluationsEvaluationIdRoute = EvaluationsEvaluationIdRouteImport.update({
+  id: '/evaluations/$evaluationId',
+  path: '/evaluations/$evaluationId',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ExperimentsExperimentIdRoute = ExperimentsExperimentIdRouteImport.update({
+  id: '/experiments/$experimentId',
+  path: '/experiments/$experimentId',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ProjectsProjectIdRoute = ProjectsProjectIdRouteImport.update({
   id: '/$projectId',
   path: '/$projectId',
@@ -32,30 +50,61 @@ const ProjectsProjectIdRoute = ProjectsProjectIdRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/projects': typeof ProjectsRouteWithChildren
+  '/episodes/$episodeId': typeof EpisodesEpisodeIdRoute
+  '/evaluations/$evaluationId': typeof EvaluationsEvaluationIdRoute
+  '/experiments/$experimentId': typeof ExperimentsExperimentIdRoute
   '/projects/$projectId': typeof ProjectsProjectIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/projects': typeof ProjectsRouteWithChildren
+  '/episodes/$episodeId': typeof EpisodesEpisodeIdRoute
+  '/evaluations/$evaluationId': typeof EvaluationsEvaluationIdRoute
+  '/experiments/$experimentId': typeof ExperimentsExperimentIdRoute
   '/projects/$projectId': typeof ProjectsProjectIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/projects': typeof ProjectsRouteWithChildren
+  '/episodes/$episodeId': typeof EpisodesEpisodeIdRoute
+  '/evaluations/$evaluationId': typeof EvaluationsEvaluationIdRoute
+  '/experiments/$experimentId': typeof ExperimentsExperimentIdRoute
   '/projects/$projectId': typeof ProjectsProjectIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/projects' | '/projects/$projectId'
+  fullPaths:
+    | '/'
+    | '/projects'
+    | '/episodes/$episodeId'
+    | '/evaluations/$evaluationId'
+    | '/experiments/$experimentId'
+    | '/projects/$projectId'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/projects' | '/projects/$projectId'
-  id: '__root__' | '/' | '/projects' | '/projects/$projectId'
+  to:
+    | '/'
+    | '/projects'
+    | '/episodes/$episodeId'
+    | '/evaluations/$evaluationId'
+    | '/experiments/$experimentId'
+    | '/projects/$projectId'
+  id:
+    | '__root__'
+    | '/'
+    | '/projects'
+    | '/episodes/$episodeId'
+    | '/evaluations/$evaluationId'
+    | '/experiments/$experimentId'
+    | '/projects/$projectId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   ProjectsRoute: typeof ProjectsRouteWithChildren
+  EpisodesEpisodeIdRoute: typeof EpisodesEpisodeIdRoute
+  EvaluationsEvaluationIdRoute: typeof EvaluationsEvaluationIdRoute
+  ExperimentsExperimentIdRoute: typeof ExperimentsExperimentIdRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -72,6 +121,27 @@ declare module '@tanstack/react-router' {
       path: '/projects'
       fullPath: '/projects'
       preLoaderRoute: typeof ProjectsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/episodes/$episodeId': {
+      id: '/episodes/$episodeId'
+      path: '/episodes/$episodeId'
+      fullPath: '/episodes/$episodeId'
+      preLoaderRoute: typeof EpisodesEpisodeIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/evaluations/$evaluationId': {
+      id: '/evaluations/$evaluationId'
+      path: '/evaluations/$evaluationId'
+      fullPath: '/evaluations/$evaluationId'
+      preLoaderRoute: typeof EvaluationsEvaluationIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/experiments/$experimentId': {
+      id: '/experiments/$experimentId'
+      path: '/experiments/$experimentId'
+      fullPath: '/experiments/$experimentId'
+      preLoaderRoute: typeof ExperimentsExperimentIdRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/projects/$projectId': {
@@ -99,6 +169,9 @@ const ProjectsRouteWithChildren = ProjectsRoute._addFileChildren(
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   ProjectsRoute: ProjectsRouteWithChildren,
+  EpisodesEpisodeIdRoute: EpisodesEpisodeIdRoute,
+  EvaluationsEvaluationIdRoute: EvaluationsEvaluationIdRoute,
+  ExperimentsExperimentIdRoute: ExperimentsExperimentIdRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

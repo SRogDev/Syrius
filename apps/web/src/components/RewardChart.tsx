@@ -13,10 +13,13 @@ export default function RewardChart({
 }) {
   if (points.length === 0) {
     return (
-      <p className="font-mono text-sm text-muted" data-testid="reward-chart-empty">
-        No training points yet — start training (or wait for a run) and the
-        live curve appears here. The backend has no training-history
-        endpoint, so past runs show only their latest metrics point.
+      <p
+        className="font-mono text-sm text-muted"
+        data-testid="reward-chart-empty"
+      >
+        No training points yet — start training (or wait for a run) and the live
+        curve appears here. The backend has no training-history endpoint, so
+        past runs show only their latest metrics point.
       </p>
     );
   }

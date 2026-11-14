@@ -60,7 +60,9 @@ export function episodeStats(steps: CartPoleStep[]): EpisodeStats {
     length,
     totalReward,
     success:
-      length === 0 ? null : length >= CARTPOLE_SUCCESS_LENGTH && truncatedAt !== null,
+      length === 0
+        ? null
+        : length >= CARTPOLE_SUCCESS_LENGTH && truncatedAt !== null,
     maxAbsX,
     maxAbsTheta,
     terminatedAt,
@@ -77,7 +79,11 @@ export function clampStep(index: number, length: number): number {
 /** Pole-tip position in canvas coordinates, relative to the cart centre.
  * theta = 0 is straight up; positive theta leans right. y grows down
  * in canvas space, so the tip's y is negative (above the cart). */
-export function poleTip(cartCentreX: number, theta: number, poleLength: number): { x: number; y: number } {
+export function poleTip(
+  cartCentreX: number,
+  theta: number,
+  poleLength: number,
+): { x: number; y: number } {
   return {
     x: cartCentreX + Math.sin(theta) * poleLength,
     y: -Math.cos(theta) * poleLength,

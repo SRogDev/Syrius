@@ -8,14 +8,18 @@ import RewardChart from './RewardChart';
 // React wrapper.
 vi.mock('echarts-for-react', () => ({
   default: ({ option }: { option: Record<string, unknown> }) => (
-    <div data-testid="echarts-stub">{JSON.stringify((option.series as unknown[])[0])}</div>
+    <div data-testid="echarts-stub">
+      {JSON.stringify((option.series as unknown[])[0])}
+    </div>
   ),
 }));
 
 describe('RewardChart', () => {
   it('states honestly that no points exist yet instead of drawing a fake curve', () => {
     render(<RewardChart points={[]} title="Training reward" />);
-    expect(screen.getByTestId('reward-chart-empty')).toHaveTextContent('No training points yet');
+    expect(screen.getByTestId('reward-chart-empty')).toHaveTextContent(
+      'No training points yet',
+    );
   });
 
   it('renders the chart container once points exist', () => {

@@ -10,13 +10,15 @@ const BUILT = [
   'Worker registration + heartbeat CLI',
   'PostgreSQL via Docker Compose + Alembic baseline migration',
   'CI: ruff, Biome, pytest, web build, docs build',
+  'Backend vertical slice: project → spec → CartPole env → PPO training → evaluation → policy export (measured 2026-11-14: eval mean 498.70/500, success 0.95)',
+  'Four Studios: Project, Environment (canvas CartPole playback), Experiment (live SSE + ECharts), Evaluation (report + comparisons), plus Deliverables/export',
 ];
 
 const NOT_BUILT = [
-  'Projects, runs, experiments — no data model exists yet (Phase 1)',
-  'RL training (Gymnasium / Stable-Baselines3) — not installed yet',
-  'Departments, Studios, BYOK — Phase 1+ scope',
   'Auth, teams, billing — not in v0.1 scope',
+  'List endpoints for experiments, episodes and evaluations (Studios open objects by id; see IMPLEMENTATION_STATUS.md Phase 5)',
+  'Training resume, artifact download, training logs / resource usage — backend gaps, shown honestly in the UI',
+  'Hardening (Phase 7)',
 ];
 
 function Home() {
@@ -62,7 +64,7 @@ function Home() {
       <div className="grid gap-4 md:grid-cols-2">
         <section className="hud-panel p-5">
           <h2 className="mb-3 font-mono text-xs uppercase tracking-[0.25em] text-platinum">
-            Built in Phase 0
+            Built — Phases 0–6
           </h2>
           <ul className="space-y-2 text-sm text-highlight">
             {BUILT.map((item) => (

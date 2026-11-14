@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { clampStep, type CartPoleStep } from '#/lib/cartpole';
+import { type CartPoleStep, clampStep } from '#/lib/cartpole';
 
 /** Episode playback state. The step index is the single source of truth;
  * the canvas draws from it — React state changes only when the step
@@ -28,7 +28,9 @@ export function useEpisodePlayer(steps: CartPoleStep[]): PlayerState {
   const lastRef = useRef<number>(0);
   const accRef = useRef<number>(0);
 
-  // A new episode resets the player.
+  // A new episode resets the player. `steps` is a new array identity
+  // per fetched trace, so it is the episode identity here.
+  // biome-ignore lint/correctness/useExhaustiveDependencies: steps identity = episode identity
   useEffect(() => {
     setIndex(0);
     setPlaying(false);

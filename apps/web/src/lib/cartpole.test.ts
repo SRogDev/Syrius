@@ -2,11 +2,11 @@ import { describe, expect, it } from 'vitest';
 import {
   CARTPOLE_ANGLE_LIMIT_RAD,
   CARTPOLE_X_LIMIT,
+  type CartPoleStep,
   clampStep,
   cumulativeRewards,
   episodeStats,
   poleTip,
-  type CartPoleStep,
 } from './cartpole';
 
 function step(partial: Partial<CartPoleStep>): CartPoleStep {
@@ -24,7 +24,11 @@ function step(partial: Partial<CartPoleStep>): CartPoleStep {
 
 describe('cumulativeRewards', () => {
   it('accumulates per-step rewards', () => {
-    const steps = [step({ reward: 1 }), step({ reward: 1 }), step({ reward: 0.5 })];
+    const steps = [
+      step({ reward: 1 }),
+      step({ reward: 1 }),
+      step({ reward: 0.5 }),
+    ];
     expect(cumulativeRewards(steps)).toEqual([1, 2, 2.5]);
   });
 
@@ -49,7 +53,11 @@ describe('episodeStats', () => {
   it('reports a failure when the pole angle exceeds the CartPole limit', () => {
     const steps = [
       step({}),
-      step({ step: 2, observation: [0, 0, CARTPOLE_ANGLE_LIMIT_RAD + 0.01, 0], terminated: true }),
+      step({
+        step: 2,
+        observation: [0, 0, CARTPOLE_ANGLE_LIMIT_RAD + 0.01, 0],
+        terminated: true,
+      }),
     ];
     const stats = episodeStats(steps);
     expect(stats.maxAbsTheta).toBeGreaterThan(CARTPOLE_ANGLE_LIMIT_RAD);

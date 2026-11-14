@@ -15,10 +15,17 @@ const HUD = {
   highlight: '#E7EBF2',
 };
 
-export function buildRewardOption(points: RewardPoint[], title: string): Record<string, unknown> {
+export function buildRewardOption(
+  points: RewardPoint[],
+  title: string,
+): Record<string, unknown> {
   return {
     animation: false,
-    title: { text: title, left: 'left', textStyle: { color: HUD.text, fontSize: 12 } },
+    title: {
+      text: title,
+      left: 'left',
+      textStyle: { color: HUD.text, fontSize: 12 },
+    },
     tooltip: { trigger: 'axis', valueFormatter: (v: number) => v.toFixed(2) },
     grid: { left: 48, right: 16, top: 32, bottom: 28 },
     xAxis: {
