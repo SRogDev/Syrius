@@ -10,12 +10,14 @@ as a job — never run inside a request handler. Live progress is SSE.
 from __future__ import annotations
 
 import asyncio
+import csv
+import io
 import json
 from collections.abc import Iterator
 from datetime import datetime
 
 from fastapi import APIRouter, Depends, HTTPException
-from fastapi.responses import StreamingResponse
+from fastapi.responses import Response, StreamingResponse
 from sqlalchemy.orm import Session
 
 from . import jobs as queue
@@ -54,6 +56,7 @@ from .schemas import (
     TrainingConfig,
     TrainRequest,
 )
+from .storage import LocalStorage
 
 router = APIRouter(prefix="/api/v1")
 
@@ -119,6 +122,28 @@ def _experiment_out(row: Experiment) -> dict:
         "algorithm": row.algorithm,
         "config": row.config or {},
         "status": row.status,
+    }
+
+
+def _evaluation_out(row: EvaluationRun) -> dict:
+    return {
+        "id": row.id,
+        "experiment_id": row.experiment_id,
+        "policy_id": row.policy_id,
+        "status": row.status,
+        "metrics": row.metrics or {},
+    }
+
+
+def _episode_out(row: Episode) -> dict:
+    return {
+        "id": row.id,
+        "environment_id": row.environment_id,
+        "length": row.length,
+        "total_reward": row.total_reward,
+        "success": row.success,
+        "seed": row.seed,
+        "trace_artifact_id": row.trace_artifact_id,
     }
 
 
@@ -295,6 +320,17 @@ def create_experiment(payload: ExperimentCreate, session: Session = Depends(get_
     return _experiment_out(row)
 
 
+@router.get("/experiments")
+def list_experiments(
+    project_id: str | None = None, session: Session = Depends(get_db)
+) -> list[dict]:
+    """List experiments (Phase 7), optionally filtered by project."""
+    query = session.query(Experiment).order_by(Experiment.created_at)
+    if project_id is not None:
+        query = query.filter(Experiment.project_id == project_id)
+    return [_experiment_out(row) for row in query.all()]
+
+
 @router.get("/experiments/{experiment_id}")
 def get_experiment(experiment_id: str, session: Session = Depends(get_db)) -> dict:
     row = session.get(Experiment, experiment_id)
@@ -384,6 +420,56 @@ def experiment_metrics(experiment_id: str, session: Session = Depends(get_db)) -
     }
 
 
+@router.get("/experiments/{experiment_id}/history")
+def experiment_history(experiment_id: str, session: Session = Depends(get_db)) -> dict:
+    """Training history (Phase 7): the persisted metrics.csv rows of the
+    latest training run — timestep / mean episode reward points.
+
+    The history is read from artifact storage (the metrics.csv the
+    worker wrote at training time), not recomputed or invented.
+    """
+    row = session.get(Experiment, experiment_id)
+    if row is None:
+        raise _not_found("experiment")
+    run = (
+        session.query(TrainingRun)
+        .filter(TrainingRun.experiment_id == experiment_id)
+        .order_by(TrainingRun.created_at.desc())
+        .first()
+    )
+    if run is None:
+        return {
+            "experiment_id": experiment_id,
+            "training_run_id": None,
+            "status": "no_run",
+            "points": [],
+        }
+    key = f"training/{experiment_id}/{run.id}/metrics.csv"
+    storage = LocalStorage()
+    if not storage.exists(key):
+        return {
+            "experiment_id": experiment_id,
+            "training_run_id": run.id,
+            "status": run.status,
+            "points": [],
+        }
+    points = []
+    for record in csv.DictReader(io.StringIO(storage.get(key).decode())):
+        raw = (record.get("mean_episode_reward") or "").strip()
+        points.append(
+            {
+                "timestep": int(record["timestep"]),
+                "mean_episode_reward": float(raw) if raw else None,
+            }
+        )
+    return {
+        "experiment_id": experiment_id,
+        "training_run_id": run.id,
+        "status": run.status,
+        "points": points,
+    }
+
+
 @router.get("/experiments/{experiment_id}/events")
 async def experiment_events(experiment_id: str) -> StreamingResponse:
     """SSE: live training progress for an experiment (polls DB rows)."""
@@ -452,18 +538,23 @@ def evaluate_experiment(
 # ---------------------------------------------------------------------------
 
 
+@router.get("/evaluations")
+def list_evaluations(
+    experiment_id: str | None = None, session: Session = Depends(get_db)
+) -> list[dict]:
+    """List evaluation runs (Phase 7), optionally filtered by experiment."""
+    query = session.query(EvaluationRun).order_by(EvaluationRun.created_at)
+    if experiment_id is not None:
+        query = query.filter(EvaluationRun.experiment_id == experiment_id)
+    return [_evaluation_out(row) for row in query.all()]
+
+
 @router.get("/evaluations/{evaluation_id}")
 def get_evaluation(evaluation_id: str, session: Session = Depends(get_db)) -> dict:
     row = session.get(EvaluationRun, evaluation_id)
     if row is None:
         raise _not_found("evaluation")
-    return {
-        "id": row.id,
-        "experiment_id": row.experiment_id,
-        "policy_id": row.policy_id,
-        "status": row.status,
-        "metrics": row.metrics or {},
-    }
+    return _evaluation_out(row)
 
 
 @router.get("/evaluations/{evaluation_id}/report")
@@ -567,20 +658,23 @@ def export_policy(policy_id: str, session: Session = Depends(get_db)) -> dict:
 # ---------------------------------------------------------------------------
 
 
+@router.get("/episodes")
+def list_episodes(
+    environment_id: str | None = None, session: Session = Depends(get_db)
+) -> list[dict]:
+    """List recorded episodes (Phase 7), optionally by environment."""
+    query = session.query(Episode).order_by(Episode.created_at)
+    if environment_id is not None:
+        query = query.filter(Episode.environment_id == environment_id)
+    return [_episode_out(row) for row in query.all()]
+
+
 @router.get("/episodes/{episode_id}")
 def get_episode(episode_id: str, session: Session = Depends(get_db)) -> dict:
     row = session.get(Episode, episode_id)
     if row is None:
         raise _not_found("episode")
-    return {
-        "id": row.id,
-        "environment_id": row.environment_id,
-        "length": row.length,
-        "total_reward": row.total_reward,
-        "success": row.success,
-        "seed": row.seed,
-        "trace_artifact_id": row.trace_artifact_id,
-    }
+    return _episode_out(row)
 
 
 @router.get("/episodes/{episode_id}/trace")
@@ -616,6 +710,30 @@ def get_artifact(artifact_id: str, session: Session = Depends(get_db)) -> dict:
         "sha256": row.sha256,
         "metadata": row.artifact_metadata or {},
     }
+
+
+@router.get("/artifacts/{artifact_id}/download")
+def download_artifact(artifact_id: str, session: Session = Depends(get_db)) -> Response:
+    """Download an artifact's bytes (Phase 7, e.g. the delivery package
+    zip). Local storage only; non-local URIs answer 501. The path is
+    resolved through the traversal-guarded ``resolve_local_path``."""
+    row = session.get(Artifact, artifact_id)
+    if row is None:
+        raise _not_found("artifact")
+    try:
+        path = resolve_local_path(row.storage_uri)
+    except ValueError as exc:
+        raise HTTPException(
+            status_code=501,
+            detail=f"artifact storage is not local: {row.storage_uri}",
+        ) from exc
+    if not path.exists():
+        raise HTTPException(status_code=404, detail="artifact bytes not found in storage")
+    return Response(
+        content=path.read_bytes(),
+        media_type="application/octet-stream",
+        headers={"Content-Disposition": f'attachment; filename="{row.name}"'},
+    )
 
 
 # ---------------------------------------------------------------------------

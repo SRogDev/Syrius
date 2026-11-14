@@ -36,10 +36,18 @@ from .storage import LocalStorage, sha256_bytes
 
 
 def resolve_local_path(storage_uri: str) -> Path:
-    """Map a ``local://`` storage URI to its filesystem path."""
+    """Map a ``local://`` storage URI to its filesystem path.
+
+    The resolved path must stay inside the storage root: a URI such
+    as ``local://../escape.txt`` is rejected instead of escaping.
+    """
     if not storage_uri.startswith("local://"):
         raise ValueError(f"not a local storage URI: {storage_uri!r}")
-    return Path(settings.storage_dir).expanduser().resolve() / storage_uri[len("local://") :]
+    root = Path(settings.storage_dir).expanduser().resolve()
+    candidate = (root / storage_uri[len("local://") :]).resolve()
+    if candidate != root and root not in candidate.parents:
+        raise ValueError(f"local storage URI escapes storage root: {storage_uri!r}")
+    return candidate
 
 
 def _register_artifact(
