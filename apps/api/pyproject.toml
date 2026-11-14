@@ -12,7 +12,19 @@ dependencies = [
     "psycopg[binary]==3.3.9",
     "uvicorn==0.54.0",
     "httpx==0.28.1",
+    "gymnasium==1.4.0",
+    "stable-baselines3==2.9.2",
+    "torch==2.15.0",
+    "langgraph==0.6.8",
 ]
+
+[[tool.uv.index]]
+name = "pytorch-cpu"
+url = "https://download.pytorch.org/whl/cpu"
+explicit = true
+
+[tool.uv.sources]
+torch = { index = "pytorch-cpu" }
 
 [dependency-groups]
 dev = [

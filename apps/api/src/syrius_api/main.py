@@ -1,8 +1,9 @@
-"""Syrius API — FastAPI application (Phase 0).
+"""Syrius API — FastAPI application (Phases 0–6).
 
-Phase 0 scope is deliberately small: two health endpoints that report real
-service state, including honest PostgreSQL reachability. No business
-routes exist yet; they arrive with Phase 1.
+Phase 0: health endpoints with honest DB reachability. Phases 1–6:
+the full versioned API (projects, specs, environments, experiments,
+training jobs, evaluations, policies, capabilities, workflows,
+workers, events) — see ``routers.py``.
 """
 
 from __future__ import annotations
@@ -17,6 +18,7 @@ from sqlalchemy import text
 from sqlalchemy.exc import SQLAlchemyError
 
 from .db import engine
+from .routers import router as v1_router
 from .settings import settings
 
 logger = logging.getLogger(__name__)
@@ -72,3 +74,6 @@ def health() -> dict[str, str]:
 def health_v1() -> dict[str, str]:
     """Versioned health probe used by the web frontend."""
     return health_payload()
+
+
+app.include_router(v1_router)

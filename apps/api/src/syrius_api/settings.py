@@ -18,6 +18,8 @@ class Settings(BaseSettings):
     )
 
     database_url: str = "postgresql+psycopg://syrius:syrius@localhost:5432/syrius"
+    storage_dir: str = "./var/storage"
+    """Local artifact storage root (Phase 1+). S3 is an interface only."""
     cors_origins: list[str] = [
         "http://localhost:3000",
         "http://127.0.0.1:3000",

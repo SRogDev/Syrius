@@ -1,0 +1,7 @@
+{
+  "name": "syrius-api-client",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Generated TypeScript types for the Syrius API (from OpenAPI).",
+  "types": "./src/types.ts"
+}

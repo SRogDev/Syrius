@@ -39,6 +39,7 @@ coverage/
 
 # Artifacts (training runs, exports, generated data)
 artifacts/
+var/
 
 # OS / editors
 .DS_Store

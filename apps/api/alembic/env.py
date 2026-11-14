@@ -19,9 +19,10 @@ DATABASE_URL = os.environ.get(
 )
 config.set_main_option("sqlalchemy.url", DATABASE_URL)
 
-# Phase 0 has no ORM models yet; target_metadata stays None (baseline
-# migration uses op.* directly). Phase 1 wires the real models here.
-target_metadata = None
+# Phase 1+: ORM models are the migration target.
+from syrius_api.models import Base  # noqa: E402
+
+target_metadata = Base.metadata
 
 
 def run_migrations_offline() -> None:
