@@ -1,0 +1,18 @@
+# Virtual workspace root for the Syrius monorepo (no package of its own).
+# Real packages live in apps/api and apps/worker.
+[tool.uv]
+package = false
+
+[tool.uv.workspace]
+members = ["apps/api", "apps/worker"]
+
+[tool.uv.sources]
+syrius-api = { workspace = true }
+syrius-worker = { workspace = true }
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP"]

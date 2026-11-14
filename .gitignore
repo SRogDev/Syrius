@@ -1,0 +1,48 @@
+# Environment / secrets
+.env
+.env.*
+!.env.example
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.uv/
+*.egg-info/
+dist/
+build/
+
+# Node / pnpm
+node_modules/
+.pnpm-store/
+.pnpm-debug.log
+
+# TanStack Start / Vite
+.tanstack/
+dist/
+dist-ssr/
+.nitro/
+.output/
+.vinxi/
+*.local
+
+# Astro docs
+docs/.astro/
+docs/dist/
+
+# Tests & coverage
+.pytest_cache/
+.coverage
+htmlcov/
+coverage/
+
+# Artifacts (training runs, exports, generated data)
+artifacts/
+
+# OS / editors
+.DS_Store
+.vscode/*
+!.vscode/settings.json
+*.swp
+*.swo

@@ -1,0 +1,10 @@
+.git
+.github
+node_modules
+.venv
+__pycache__
+apps/web
+docs
+docs/assets
+*.md
+!.env.example

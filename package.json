@@ -1,0 +1,19 @@
+{
+  "description": "Syrius \u2014 RL Engineering Factory (monorepo root)",
+  "devDependencies": {
+    "@biomejs/biome": "2.6.7"
+  },
+  "name": "syrius",
+  "packageManager": "pnpm@12.6.0",
+  "private": true,
+  "scripts": {
+    "docs:build": "pnpm --filter syrius-docs build",
+    "docs:dev": "pnpm --filter syrius-docs dev",
+    "lint": "biome check .",
+    "lint:fix": "biome check --write .",
+    "web:build": "pnpm --filter syrius-web build",
+    "web:dev": "pnpm --filter syrius-web dev",
+    "web:typecheck": "pnpm --filter syrius-web typecheck"
+  },
+  "version": "0.1.0"
+}

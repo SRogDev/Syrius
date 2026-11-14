@@ -1,0 +1,54 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: syrius-postgres
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-syrius}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-syrius}
+      POSTGRES_DB: ${POSTGRES_DB:-syrius}
+    ports:
+      - "5432:5432"
+    volumes:
+      - syrius_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "pg_isready -U ${POSTGRES_USER:-syrius} -d ${POSTGRES_DB:-syrius}",
+        ]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    restart: unless-stopped
+
+  api:
+    build:
+      context: .
+      dockerfile: infrastructure/docker/api.Dockerfile
+    container_name: syrius-api
+    environment:
+      DATABASE_URL: postgresql+psycopg://${POSTGRES_USER:-syrius}:${POSTGRES_PASSWORD:-syrius}@postgres:5432/${POSTGRES_DB:-syrius}
+    ports:
+      - "8000:8000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: unless-stopped
+
+  worker:
+    build:
+      context: .
+      dockerfile: infrastructure/docker/worker.Dockerfile
+    container_name: syrius-worker
+    environment:
+      DATABASE_URL: postgresql+psycopg://${POSTGRES_USER:-syrius}:${POSTGRES_PASSWORD:-syrius}@postgres:5432/${POSTGRES_DB:-syrius}
+    depends_on:
+      postgres:
+        condition: service_healthy
+    # Phase 0: the worker runs one heartbeat and exits; the long-running
+    # loop arrives with Phase 1.
+    command: ["python", "-m", "syrius_worker.main", "heartbeat"]
+    restart: "no"
+
+volumes:
+  syrius_pgdata:
