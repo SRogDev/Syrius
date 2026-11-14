@@ -170,6 +170,16 @@ def test_artifact_download_404_and_non_local_501(client, session) -> None:
     resp = client.get(f"/api/v1/artifacts/{artifact.id}/download")
     assert resp.status_code == 501
 
+    escaping = Artifact(
+        kind="package", name="y.zip", storage_uri="local://../escape.zip",
+        size_bytes=1, sha256="abc",
+    )
+    session.add(escaping)
+    session.commit()
+    resp = client.get(f"/api/v1/artifacts/{escaping.id}/download")
+    assert resp.status_code == 400
+    assert "escapes storage root" in resp.json()["detail"]
+
 
 def test_resolve_local_path_refuses_escape(monkeypatch, tmp_path) -> None:
     monkeypatch.setattr(settings, "storage_dir", str(tmp_path / "storage"))

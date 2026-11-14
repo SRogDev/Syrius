@@ -723,6 +723,10 @@ def download_artifact(artifact_id: str, session: Session = Depends(get_db)) -> R
     try:
         path = resolve_local_path(row.storage_uri)
     except ValueError as exc:
+        # Non-local URIs (e.g. s3://) are an unimplemented backend;
+        # a local:// URI that escapes the storage root is a bad row.
+        if row.storage_uri.startswith("local://"):
+            raise HTTPException(status_code=400, detail=str(exc)) from exc
         raise HTTPException(
             status_code=501,
             detail=f"artifact storage is not local: {row.storage_uri}",
