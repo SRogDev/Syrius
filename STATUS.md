@@ -111,9 +111,10 @@
   `docker compose up`, `make migrate`, and the Docker image builds are
   unverified. `docker compose config` validates cleanly. The same
   schema is exercised locally via `create_all` on SQLite.
-- **CI re-observation:** the fixes for the 73fb96d failures were
-  pushed with the Phase 7 work; the Actions run for the final push
-  must be observed (see the Phase 7 report — status at push time).
+- **CI:** observed GREEN on the Phase 7 final push — Actions run
+  43626409634 for `4261a02`: python, web and docs jobs all
+  `completed / success`. The 73fb96d failures are fixed and verified
+  on `main`.
 - **Dependency audit (JS):** `pnpm audit` cannot reach the npm
   registry audit endpoint from this sandbox (request timed out);
   `npm audit` needs an npm lockfile the pnpm workspace does not
