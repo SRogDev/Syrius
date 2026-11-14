@@ -1,0 +1,60 @@
+# IMPLEMENTATION_STATUS.md — Syrius v0.1
+
+Honest tracking of Phase 0 requirements. States: **Not started** /
+**In progress** / **Implemented** / **Tested** / **Blocked**.
+
+Evidence for every Tested item is in the "Evidence" column (command +
+result, all run on the build VM on 2026-11-14). Blocked items name the
+exact failure — nothing is faked green.
+
+## Phase 0 — Repository Foundation
+
+| #    | Requirement                                                                                                     | State       | Evidence / note                                                                                                                                                                                             |
+| ---- | --------------------------------------------------------------------------------------------------------------- | ----------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 0.1  | Monorepo skeleton (pnpm workspaces + uv workspace)                                                              | Tested      | `pnpm install` — 368 packages; `uv sync` — workspace resolves, both packages build with `uv_build`                                                                                                          |
+| 0.2  | Web: TanStack Start SPA skeleton that loads (routing shell + home/project pages, real API health, no mock data) | Tested      | `pnpm --filter syrius-web build` — SPA prerender of `/` OK; `vite preview` on :4173 — `/` 200, `/projects` 200, logo 200; shell contains live "Probing API" panel                                           |
+| 0.3  | API: FastAPI `GET /health` + `GET /api/v1/health` with real DB reachability flag, CORS for local web            | Tested      | pytest 3/3; live `uvicorn` — both endpoints return `{"status":"degraded","db":"unavailable"}` with no DB (honest); unknown route 404                                                                        |
+| 0.4  | Worker: registers itself, reports status (heartbeat/status CLI + DB-backed row, honest "db unavailable")        | Tested      | pytest 2/2; live CLI `status` prints `db: unavailable`, exit 1, with no DB                                                                                                                                  |
+| 0.5  | PostgreSQL via docker-compose (postgres:16-alpine, named volume, healthcheck)                                   | Blocked     | `docker compose config -q` validates (exit 0). **Live run blocked:** no Docker daemon in sandbox — `dockerd` fails with `iptables ... Permission denied (you must be root) (exit status 4)` even under sudo |
+| 0.6  | Alembic initialized + initial baseline migration                                                                | Implemented | Migration `0001` creates `worker_registrations`. **Live apply Blocked** — needs Postgres (see 0.5); `make migrate` fails honestly on connection refused                                                     |
+| 0.7  | `.env.example` (placeholders only, no secrets)                                                                  | Implemented | Reviewed — placeholders only                                                                                                                                                                                |
+| 0.8  | Makefile (install, dev, test, lint, migrate, up/down)                                                           | Tested      | `make install`, `make test`, `make lint`, `make check` run. `make up` / `make migrate` Blocked by 0.5 (Docker)                                                                                              |
+| 0.9  | Root files: README, LICENSE (MIT, SRogDev 2026), CONTRIBUTING, .gitignore, pnpm-workspace.yaml, pyproject.toml  | Implemented | All present; README states Phase 0 scope and what is NOT built                                                                                                                                              |
+| 0.10 | CI: `.github/workflows/ci.yml` (ruff, Biome, pytest, web build, docs build)                                     | Implemented | Workflow written; **first Actions run unobserved** until the first push (see 0.14)                                                                                                                          |
+| 0.11 | Version verification before pinning + `docs/architecture/versions.md`                                           | Implemented | npm/PyPI checked 2026-11-14; TanStack Start SPA config verified via official `@tanstack/cli` scaffold + docs                                                                                                |
+| 0.12 | Tests with evidence (TDD RED→GREEN)                                                                             | Tested      | API: RED `ModuleNotFoundError: No module named 'syrius_api.main'` → GREEN 3 passed. Worker: RED `ModuleNotFoundError: No module named 'syrius_worker.main'` → GREEN 2 passed                                |
+| 0.13 | Lint: Ruff + Biome + strict TS, zero errors                                                                     | Tested      | `ruff check` — all checks passed; `biome check .` — 27 files, no errors; `tsc --noEmit` — exit 0                                                                                                            |
+| 0.14 | Docs: Astro Starlight skeleton (getting-started, architecture, development) with real install steps             | Tested      | `pnpm --filter syrius-docs build` — 6 pages built                                                                                                                                                           |
+| 0.15 | AGENTS.md + STATUS.md (repo-docs standard)                                                                      | Implemented | Both present at repo root                                                                                                                                                                                   |
+| 0.16 | Dockerfiles for API/worker                                                                                      | Implemented | Written; **live `docker build` Blocked** by 0.5 (no daemon)                                                                                                                                                 |
+| 0.17 | GitHub push + remote == local verification                                                                      | In progress | Pending push (see push notes in the Phase 0 report)                                                                                                                                                         |
+
+## Phases 1–7 — Not started
+
+| Phase | Scope (per plan)                                                      | State       |
+| ----- | --------------------------------------------------------------------- | ----------- |
+| 1     | First vertical slice: one project, CartPole-v1, one real training run | Not started |
+| 2     | Projects + runs data model, API routes, OpenAPI client types          | Not started |
+| 3     | Departments                                                           | Not started |
+| 4     | Studios                                                               | Not started |
+| 5     | BYOK + worker execution loop                                          | Not started |
+| 6     | Evaluation + reproducibility                                          | Not started |
+| 7     | Polish, launch bar                                                    | Not started |
+
+## Known limitations (Phase 0, by design or environment)
+
+- **No live PostgreSQL verification anywhere.** API and worker health
+  logic is tested with the DB down (honest `unavailable` path); the
+  `db: ok` path is exercised only in CI (Postgres service) and has not
+  been observed live yet.
+- **CI has not run yet.** First GitHub Actions run is pending the first
+  push.
+- **Docker images unbuilt.** Dockerfiles are standard `uv`-based images
+  but `docker build` was never executed here.
+- **Web health panel verified via prerendered shell + preview only.**
+  The client-side fetch (React Query against the live API) needs a
+  browser run with both servers up; the code path is the standard
+  `fetch('/api/v1/health')` through the Vite dev proxy.
+- **No RL packages installed** (Gymnasium / SB3) — by design, Phase 1.
+- **No `packages/` directory** — by design; appears with the first real
+  shared code (OpenAPI client types, Phase 1+).
