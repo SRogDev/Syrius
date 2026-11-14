@@ -106,4 +106,4 @@ commits, TDD with RED→GREEN evidence.
 
 ## License
 
-MIT — see [LICENSE](LICENSE). Copyright (c) 2026 SRogDev.
+MIT — see [LICENSE](LICENSE). Copyright (c) 2026 Roger Modesto Oria González.
