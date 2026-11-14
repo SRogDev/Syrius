@@ -1,0 +1,37 @@
+---
+title: Syrius
+description: An open-source RL Engineering Factory.
+template: splash
+hero:
+  tagline: An open-source factory for reinforcement-learning engineering — departments, studios and reproducible RL pipelines.
+  image:
+    file: ../../assets/syrius-logo.webp
+    alt: Syrius logo — the star Sirius
+  actions:
+    - text: Getting started
+      link: /getting-started/
+      icon: right-arrow
+    - text: Architecture
+      link: /architecture/
+      icon: open-book
+      variant: minimal
+---
+
+import { Card, CardGrid } from '@astrojs/starlight/components';
+
+## What is Syrius?
+
+Syrius is an RL Engineering Factory: it turns reinforcement-learning work
+into a repeatable, observable production line — projects, runs, evaluations
+and deployments, with departments and studios as the org model.
+
+<CardGrid>
+  <Card title="Phase 0 — done" icon="check">
+    Repository foundation: monorepo, API health, worker heartbeat,
+    PostgreSQL + Alembic, CI. See `IMPLEMENTATION_STATUS.md` in the repo.
+  </Card>
+  <Card title="Phase 1 — next" icon="rocket">
+    First vertical slice: one project, one environment (CartPole-v1),
+    one real training run end to end.
+  </Card>
+</CardGrid>

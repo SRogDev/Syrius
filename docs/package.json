@@ -1,0 +1,18 @@
+{
+  "dependencies": {
+    "@astrojs/starlight": "0.43.1",
+    "astro": "7.4.12"
+  },
+  "devDependencies": {
+    "typescript": "6.0.3"
+  },
+  "name": "syrius-docs",
+  "private": true,
+  "scripts": {
+    "build": "astro build",
+    "dev": "astro dev --port 4321",
+    "preview": "astro preview"
+  },
+  "type": "module",
+  "version": "0.1.0"
+}
