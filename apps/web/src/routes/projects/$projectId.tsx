@@ -1,5 +1,13 @@
 import { useQuery } from '@tanstack/react-query';
 import { createFileRoute, Link } from '@tanstack/react-router';
+import {
+  BarChart3,
+  FlaskConical,
+  LayoutDashboard,
+  type LucideIcon,
+  Microscope,
+  Package,
+} from 'lucide-react';
 import DeliverablesPanel from '#/components/studios/DeliverablesPanel';
 import EnvironmentPanel from '#/components/studios/EnvironmentPanel';
 import EvaluationPanel from '#/components/studios/EvaluationPanel';
@@ -24,6 +32,14 @@ const LABELS: Record<StudioTab, string> = {
   experiments: 'Experiments',
   evaluation: 'Evaluation',
   deliverables: 'Deliverables',
+};
+
+const ICONS: Record<StudioTab, LucideIcon> = {
+  overview: LayoutDashboard,
+  environment: Microscope,
+  experiments: FlaskConical,
+  evaluation: BarChart3,
+  deliverables: Package,
 };
 
 export const Route = createFileRoute('/projects/$projectId')({
@@ -69,22 +85,26 @@ function ProjectDetail() {
       ) : projectQuery.data ? (
         <>
           <nav aria-label="Studios" className="flex flex-wrap gap-2">
-            {STUDIOS.map((tab) => (
-              <Link
-                key={tab}
-                to="/projects/$projectId"
-                params={{ projectId }}
-                search={{ studio: tab }}
-                className={cn(
-                  'h-9 cursor-pointer border px-4 font-mono text-xs uppercase tracking-widest transition-colors duration-150',
-                  studio === tab
-                    ? 'border-highlight bg-highlight text-bg'
-                    : 'border-line text-platinum hover:border-platinum hover:text-highlight',
-                )}
-              >
-                {LABELS[tab]} Studio
-              </Link>
-            ))}
+            {STUDIOS.map((tab) => {
+              const Icon = ICONS[tab];
+              return (
+                <Link
+                  key={tab}
+                  to="/projects/$projectId"
+                  params={{ projectId }}
+                  search={{ studio: tab }}
+                  className={cn(
+                    'flex h-9 cursor-pointer items-center gap-2 border px-4 font-mono text-xs uppercase tracking-widest transition-colors duration-150',
+                    studio === tab
+                      ? 'border-highlight bg-highlight text-bg'
+                      : 'border-line text-platinum hover:border-platinum hover:text-highlight',
+                  )}
+                >
+                  <Icon className="h-4 w-4" aria-hidden />
+                  {LABELS[tab]} Studio
+                </Link>
+              );
+            })}
           </nav>
           {studio === 'overview' ? (
             <ProjectOverview project={projectQuery.data} />

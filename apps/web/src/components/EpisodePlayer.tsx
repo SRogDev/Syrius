@@ -1,3 +1,4 @@
+import { Pause, Play, RotateCcw, StepBack, StepForward } from 'lucide-react';
 import {
   type CartPoleStep,
   cumulativeRewards,
@@ -45,32 +46,39 @@ export default function EpisodePlayer({ steps }: { steps: CartPoleStep[] }) {
           <button
             type="button"
             onClick={player.playing ? player.pause : player.play}
-            className="h-9 cursor-pointer border border-highlight bg-highlight px-4 font-mono text-xs uppercase tracking-widest text-bg transition-colors duration-150 hover:bg-platinum"
+            className="flex h-9 cursor-pointer items-center gap-2 border border-highlight bg-highlight px-4 font-mono text-xs uppercase tracking-widest text-bg transition-colors duration-150 hover:bg-platinum"
           >
+            {player.playing ? (
+              <Pause className="h-4 w-4" aria-hidden />
+            ) : (
+              <Play className="h-4 w-4" aria-hidden />
+            )}
             {player.playing ? 'Pause' : 'Play'}
           </button>
           <button
             type="button"
             onClick={player.reset}
-            className="h-9 cursor-pointer border border-line px-4 font-mono text-xs uppercase tracking-widest text-highlight transition-colors duration-150 hover:border-platinum"
+            className="flex h-9 cursor-pointer items-center gap-2 border border-line px-4 font-mono text-xs uppercase tracking-widest text-highlight transition-colors duration-150 hover:border-platinum"
           >
+            <RotateCcw className="h-4 w-4" aria-hidden />
             Reset
           </button>
           <button
             type="button"
             onClick={player.stepBack}
             aria-label="Previous timestep"
-            className="h-9 cursor-pointer border border-line px-3 font-mono text-xs text-highlight transition-colors duration-150 hover:border-platinum"
+            className="flex h-9 cursor-pointer items-center gap-1 border border-line px-3 font-mono text-xs text-highlight transition-colors duration-150 hover:border-platinum"
           >
-            −1 step
+            <StepBack className="h-4 w-4" aria-hidden />1 step
           </button>
           <button
             type="button"
             onClick={player.stepForward}
             aria-label="Next timestep"
-            className="h-9 cursor-pointer border border-line px-3 font-mono text-xs text-highlight transition-colors duration-150 hover:border-platinum"
+            className="flex h-9 cursor-pointer items-center gap-1 border border-line px-3 font-mono text-xs text-highlight transition-colors duration-150 hover:border-platinum"
           >
-            +1 step
+            1 step
+            <StepForward className="h-4 w-4" aria-hidden />
           </button>
           <label className="ml-2 flex items-center gap-2 font-mono text-xs text-platinum">
             Speed
