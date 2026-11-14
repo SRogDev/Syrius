@@ -2,10 +2,13 @@
 # except the Docker-dependent ones (no Docker daemon in the sandbox);
 # see IMPLEMENTATION_STATUS.md.
 
-.PHONY: install up down migrate dev-api dev-web test lint check slice
+.PHONY: install up down migrate dev-api dev-web test lint check slice e2e
 
 slice: ## Run the real CartPole acceptance slice (SQLite, worker CLI)
 	uv run --project apps/api python scripts/run_cartpole_slice.py
+
+e2e: ## Run the Phase 7 end-to-end acceptance test (fresh SQLite, worker CLI)
+	uv run --project apps/api python scripts/e2e_cartpole.py
 
 install: ## Install Python (uv) and JS (pnpm) dependencies
 	uv sync

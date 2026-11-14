@@ -1,0 +1,333 @@
+{
+  "started_at": "2026-11-14T18:00:34.527897+00:00",
+  "steps": {
+    "specification": {
+      "id": "a182a494-a138-4744-bf53-60f0d6a33f74",
+      "status": "reviewed"
+    },
+    "environment": {
+      "id": "7eadf9ae-0794-4813-9cba-391f69496ad4",
+      "gym_id": "CartPole-v1"
+    },
+    "experiment": {
+      "id": "00a332ad-cf5b-43d4-8530-197d694515cb"
+    },
+    "list_experiments": {
+      "count": 1
+    },
+    "recorded_episode": {
+      "id": "ad40cf76-2bde-4c76-939a-72ba4a6ee698",
+      "length": 22
+    },
+    "baseline": {
+      "episodes": 20,
+      "mean_reward": 20.85,
+      "median_reward": 17.0,
+      "mean_length": 20.85,
+      "median_length": 17.0,
+      "min_reward": 10.0,
+      "max_reward": 62.0,
+      "policy": "random",
+      "gym_id": "CartPole-v1",
+      "seed": 0,
+      "episodes_detail": [
+        {
+          "length": 12,
+          "reward": 12.0
+        },
+        {
+          "length": 62,
+          "reward": 62.0
+        },
+        {
+          "length": 17,
+          "reward": 17.0
+        },
+        {
+          "length": 11,
+          "reward": 11.0
+        },
+        {
+          "length": 15,
+          "reward": 15.0
+        },
+        {
+          "length": 24,
+          "reward": 24.0
+        },
+        {
+          "length": 22,
+          "reward": 22.0
+        },
+        {
+          "length": 12,
+          "reward": 12.0
+        },
+        {
+          "length": 19,
+          "reward": 19.0
+        },
+        {
+          "length": 25,
+          "reward": 25.0
+        },
+        {
+          "length": 16,
+          "reward": 16.0
+        },
+        {
+          "length": 36,
+          "reward": 36.0
+        },
+        {
+          "length": 21,
+          "reward": 21.0
+        },
+        {
+          "length": 10,
+          "reward": 10.0
+        },
+        {
+          "length": 11,
+          "reward": 11.0
+        },
+        {
+          "length": 17,
+          "reward": 17.0
+        },
+        {
+          "length": 35,
+          "reward": 35.0
+        },
+        {
+          "length": 15,
+          "reward": 15.0
+        },
+        {
+          "length": 25,
+          "reward": 25.0
+        },
+        {
+          "length": 12,
+          "reward": 12.0
+        }
+      ]
+    },
+    "training": {
+      "training_run_id": "90f3d406-aaef-46da-b413-02ca176de8f9",
+      "checkpoint_artifact_id": "d7967692-1b18-4d28-b4a1-9ce1fc9f774c",
+      "metrics_artifact_id": "44d94899-0b52-49b2-8c67-1bf559ff89bc",
+      "total_timesteps": 20000,
+      "final_mean_episode_reward": 134.44,
+      "best_mean_episode_reward": 134.44,
+      "wall_seconds": 54.2
+    },
+    "training_history": {
+      "points": 40,
+      "last": {
+        "timestep": 19969,
+        "mean_episode_reward": 134.44
+      }
+    },
+    "evaluation": {
+      "episodes": 20,
+      "mean_reward": 498.7,
+      "median_reward": 500.0,
+      "mean_length": 498.7,
+      "median_length": 500.0,
+      "min_reward": 474.0,
+      "max_reward": 500.0,
+      "policy": "/home/hatch/workspace/syrius/var/results/e2e-cartpole-20261114-180026/storage/checkpoints/00a332ad-cf5b-43d4-8530-197d694515cb/90f3d406-aaef-46da-b413-02ca176de8f9/final_model.zip",
+      "gym_id": "CartPole-v1",
+      "seed": 100,
+      "deterministic": true,
+      "success_rate": 0.95,
+      "successes": 19,
+      "success_length": 500,
+      "constraint_violations": 0,
+      "episodes_detail": [
+        {
+          "length": 500,
+          "reward": 500.0
+        },
+        {
+          "length": 500,
+          "reward": 500.0
+        },
+        {
+          "length": 500,
+          "reward": 500.0
+        },
+        {
+          "length": 500,
+          "reward": 500.0
+        },
+        {
+          "length": 500,
+          "reward": 500.0
+        },
+        {
+          "length": 500,
+          "reward": 500.0
+        },
+        {
+          "length": 474,
+          "reward": 474.0
+        },
+        {
+          "length": 500,
+          "reward": 500.0
+        },
+        {
+          "length": 500,
+          "reward": 500.0
+        },
+        {
+          "length": 500,
+          "reward": 500.0
+        },
+        {
+          "length": 500,
+          "reward": 500.0
+        },
+        {
+          "length": 500,
+          "reward": 500.0
+        },
+        {
+          "length": 500,
+          "reward": 500.0
+        },
+        {
+          "length": 500,
+          "reward": 500.0
+        },
+        {
+          "length": 500,
+          "reward": 500.0
+        },
+        {
+          "length": 500,
+          "reward": 500.0
+        },
+        {
+          "length": 500,
+          "reward": 500.0
+        },
+        {
+          "length": 500,
+          "reward": 500.0
+        },
+        {
+          "length": 500,
+          "reward": 500.0
+        },
+        {
+          "length": 500,
+          "reward": 500.0
+        }
+      ]
+    },
+    "evaluation_report": {
+      "evaluation_run_id": "b2e9dcc5-f940-4c72-85aa-75be460234bc",
+      "experiment_id": "00a332ad-cf5b-43d4-8530-197d694515cb",
+      "status": "completed",
+      "mean_reward": 498.7,
+      "median_reward": 500.0,
+      "mean_length": 498.7,
+      "success_rate": 0.95,
+      "episodes": 20
+    },
+    "export": {
+      "policy_id": "12357859-0243-4610-97e6-a7cc3c8e8540",
+      "artifact_id": "8d1613e3-211c-43f4-9249-07c3c7e174f4",
+      "storage_uri": "local://packages/12357859-0243-4610-97e6-a7cc3c8e8540/policy-package.zip",
+      "manifest": {
+        "syrius_version": "0.1.0",
+        "env_id": "CartPole-v1",
+        "env_version": 1,
+        "scenario": {},
+        "algorithm": "PPO",
+        "config": {
+          "env_id": "CartPole-v1",
+          "algorithm": "PPO",
+          "seed": 42,
+          "total_timesteps": 20000,
+          "learning_rate": 0.0003,
+          "n_steps": 2048,
+          "batch_size": 64,
+          "n_epochs": 10,
+          "gamma": 0.99,
+          "gae_lambda": 0.95,
+          "clip_range": 0.2,
+          "eval_episodes": 20,
+          "eval_deterministic": true,
+          "eval_seed": 100,
+          "version": 1
+        },
+        "hyperparameters": {
+          "learning_rate": 0.0003,
+          "n_steps": 2048,
+          "batch_size": 64,
+          "n_epochs": 10,
+          "gamma": 0.99,
+          "gae_lambda": 0.95,
+          "clip_range": 0.2
+        },
+        "seeds": {
+          "training": 42,
+          "evaluation": 100
+        },
+        "framework_versions": {
+          "python": "3.12.3",
+          "gymnasium": "1.4.0",
+          "stable_baselines3": "2.9.2",
+          "torch": "2.15.0+cpu"
+        },
+        "python_version": "3.12.3",
+        "training_engine": "stable-baselines3 PPO (CPU)",
+        "model_provider": null,
+        "model_version": null,
+        "worker_config": {
+          "executor": "syrius-worker",
+          "device": "cpu"
+        },
+        "training_metrics": {},
+        "evaluation": {},
+        "artifact_refs": {
+          "model": "local://checkpoints/00a332ad-cf5b-43d4-8530-197d694515cb/90f3d406-aaef-46da-b413-02ca176de8f9/final_model.zip"
+        },
+        "created_at": "2026-11-14T18:01:51.060195+00:00"
+      },
+      "validation": {
+        "valid": true,
+        "members": ["final_model.zip", "manifest.json", "README.md"],
+        "episodes": 5,
+        "mean_reward": 492.8,
+        "mean_length": 492.8,
+        "success_rate": 0.8
+      }
+    },
+    "artifact_download": {
+      "artifact_id": "8d1613e3-211c-43f4-9249-07c3c7e174f4",
+      "size_bytes": 115035,
+      "sha256": "03c7abe6c2ae624b3a2da0fa71c75491bbb795a462e8674a6c078d2562818e6b"
+    },
+    "independent_package_validation": {
+      "valid": true,
+      "members": ["final_model.zip", "manifest.json", "README.md"],
+      "episodes": 5,
+      "mean_reward": 492.8,
+      "mean_length": 492.8,
+      "success_rate": 0.8
+    }
+  },
+  "finished_at": "2026-11-14T18:01:58.294376+00:00",
+  "wall_seconds_total": 83.8,
+  "framework_versions": {
+    "python": "3.12.3",
+    "gymnasium": "1.4.0",
+    "stable_baselines3": "2.9.2",
+    "torch": "2.15.0+cpu"
+  }
+}
