@@ -26,12 +26,17 @@ into a repeatable, observable production line — projects, runs, evaluations
 and deployments, with departments and studios as the org model.
 
 <CardGrid>
-  <Card title="Phase 0 — done" icon="check">
-    Repository foundation: monorepo, API health, worker heartbeat,
-    PostgreSQL + Alembic, CI. See `IMPLEMENTATION_STATUS.md` in the repo.
+  <Card title="Phases 0–7 — done (v0.1)" icon="check">
+    Repository foundation, the full backend CartPole slice (PPO
+    training, evaluation, policy export), the Four Studios and the
+    Phase 7 hardening pass (E2E acceptance, list/history/download
+    endpoints, security review). Measured numbers in
+    `docs/evidence/`. See `IMPLEMENTATION_STATUS.md` in the repo.
   </Card>
-  <Card title="Phase 1 — next" icon="rocket">
-    First vertical slice: one project, one environment (CartPole-v1),
-    one real training run end to end.
+  <Card title="Next — after v0.1" icon="rocket">
+    Training resume, job logs/resource usage, scenario comparison,
+    a department/tasks model, live PostgreSQL/Docker verification
+    and a LangGraph 1.x upgrade. All recorded as future work in
+    `IMPLEMENTATION_STATUS.md`.
   </Card>
 </CardGrid>

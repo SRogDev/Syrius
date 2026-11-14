@@ -6,27 +6,35 @@
 and reproducible reinforcement-learning pipelines — built in the open, one
 phase at a time.
 
-> **Status: Phases 1–6 — Backend vertical slice (v0.1) + Phase 5 Four
-> Studios.** The monorepo skeleton, the API health service, the worker
-> heartbeat CLI, PostgreSQL + Alembic, the web SPA shell and CI are in
-> place, and the backend now runs a real CartPole slice end to end:
-> project → spec → environment → PPO training (20,000 steps) →
-> independent evaluation → policy export, all through the job queue and
-> the worker. **Measured: baseline mean 23.35, PPO evaluation mean
-> 498.70/500, success rate 0.95 (19/20).** The Four Studios are built
-> on top of that API: Project Studio (spec, departments from the tool
-> registry, approvals, audit timeline), Environment Studio (canvas
-> CartPole playback from recorded episode traces), Experiment Studio
-> (live SSE progress + ECharts curves, checkpoints, comparison) and
+> **Status: Phases 0–7 complete — v0.1 hardened.** The monorepo
+> skeleton, the API health service, the worker heartbeat CLI,
+> PostgreSQL + Alembic, the web SPA shell and CI are in place, and
+> the backend runs a real CartPole slice end to end: project → spec
+> → environment → PPO training (20,000 steps) → independent
+> evaluation → policy export, all through the job queue and the
+> worker. **Measured (Phase 7 E2E, 2026-11-14): baseline mean 21.90,
+> PPO evaluation mean 498.70/500, success rate 0.95 (19/20),
+> export independently validated (mean 492.80, success 0.80).** The
+> Four Studios are built on top of that API: Project Studio (spec,
+> departments from the tool registry, approvals, audit timeline),
+> Environment Studio (canvas CartPole playback from recorded episode
+> traces), Experiment Studio (live SSE progress + ECharts curves from
+> persisted training history, checkpoints, comparison) and
 > Evaluation Studio (report.md/json, baseline/run comparison) plus a
-> Deliverables tab (policy manifest + export). Where the backend lacks
-> a list endpoint or a feature (training resume, artifact download,
-> logs), the UI says so honestly instead of faking it. Hardening
-> (Phase 7) is not built yet. See
+> Deliverables tab (policy manifest + export + package download).
+> Phase 7 added the missing list endpoints (experiments, evaluations,
+> episodes), the training-history endpoint, artifact download, a
+> storage-path traversal guard, and a real end-to-end acceptance
+> test (`make e2e`). Where the backend still lacks a feature
+> (training resume, logs, scenario comparison), the UI says so
+> honestly instead of faking it. See
 > [IMPLEMENTATION_STATUS.md](IMPLEMENTATION_STATUS.md) for the honest
-> per-item state and
+> per-item state,
 > [docs/evidence/cartpole-slice-2026-11-14.md](docs/evidence/cartpole-slice-2026-11-14.md)
-> for the measured run.
+> and
+> [docs/evidence/e2e-cartpole-2026-11-14.md](docs/evidence/e2e-cartpole-2026-11-14.md)
+> for the measured runs, and
+> [RELEASE_NOTES.md](RELEASE_NOTES.md) for the v0.1 release.
 
 ## Quickstart
 
@@ -37,11 +45,15 @@ git clone https://github.com/SRogDev/Syrius.git
 cd Syrius
 make install     # uv sync + pnpm install
 cp .env.example .env
-make up          # PostgreSQL via Docker Compose
+make up          # PostgreSQL via Docker Compose (needs a Docker daemon)
 make migrate     # Alembic: creates worker_registrations
 make dev-api     # FastAPI on http://localhost:8000
 make dev-web     # TanStack Start SPA on http://localhost:3000
 ```
+
+No Docker daemon? Skip `make up` / `make migrate` and run the
+SQLite path instead (`make slice` / `make e2e` below) — the API
+reports `status: degraded` and `db: unavailable` without Postgres.
 
 Open [http://localhost:3000](http://localhost:3000): the home page shows
 the live API health panel. If PostgreSQL is down, the API honestly
@@ -58,6 +70,8 @@ local DB, real worker CLI, PPO 20,000 steps on CPU, ~2 minutes):
 
 ```sh
 make slice
+make e2e       # Phase 7 end-to-end acceptance: slice + list/history/
+               # download assertions + independent package validation
 ```
 
 It writes its measured report to
@@ -96,15 +110,15 @@ syrius/
 │   ├── web/        TanStack Start SPA (/, /projects, /projects/$projectId with
 │   │               the Four Studios, /experiments/$id, /episodes/$id,
 │   │               /evaluations/$id)
-│   ├── api/        FastAPI — health + full /api/v1/ routes + Alembic
+│   ├── api/        FastAPI — health + full /api/v1/ routes (42 paths) + Alembic
 │   └── worker/     status / heartbeat CLI + run job loop
 ├── packages/
 │   └── api-client/ OpenAPI-generated TypeScript types
-├── scripts/        CartPole acceptance run + API client generator
+├── scripts/        CartPole acceptance run + E2E test + API client generator
 ├── docs/           Astro Starlight documentation (+ evidence/)
 ├── infrastructure/ Dockerfiles + docker-compose.yml
-├── tests/          Reserved for future end-to-end tests
-├── Makefile        install / dev / test / lint / migrate / up / down / slice
+├── tests/          Reserved for future end-to-end tests (see tests/README.md)
+├── Makefile        install / dev / test / lint / migrate / up / down / slice / e2e
 └── IMPLEMENTATION_STATUS.md   Honest per-item phase tracking
 ```
 
@@ -117,7 +131,7 @@ stacks using local/system fallbacks. Google Fonts is never fetched at
 build time. Dark industrial, precise, dense but readable; no neon, no
 generic SaaS dashboard look.
 
-## What Phases 1–6 do — and do not do
+## What Phases 0–7 do — and do not do
 
 **Do:** everything in Phase 0, plus the full backend slice: projects,
 RL problem specs (Architect), Gymnasium environments (CartPole-v1
@@ -126,17 +140,23 @@ training via SB3 (never inside a request handler), SSE live progress,
 independent evaluation with success = full 500-step episodes, policy
 packaging/export with a reproducibility manifest and independent
 package validation, 71 department tool definitions, LangGraph training
-workflows, and OpenAPI-generated TS client types. Measured on
-2026-11-14: random baseline mean 23.35; PPO (20,000 steps, seed 42)
+workflows, OpenAPI-generated TS client types (42 paths), list
+endpoints for experiments/evaluations/episodes, training history from
+persisted metrics.csv, artifact download with sha256 verification,
+and a storage-path traversal guard. Measured on 2026-11-14 (Phase 7
+E2E): random baseline mean 21.90; PPO (20,000 steps, seed 42)
 evaluation mean 498.70/500, success 0.95 (19/20); export validated
 independently (5 episodes, seed 1000: mean 492.80, success 0.80).
+Note: the random baseline mean varies run to run with the same seed
+(16.95–23.35 across six runs on 2026-11-14); PPO training and
+evaluation are identical every run.
 
-**Do not do:** auth, paid compute, production deploys, or hardening
-(Phase 7). The Studios do not fake what the backend lacks: there are
-no list endpoints for experiments, episodes or evaluations (objects
-open by id), no training resume, no artifact download, and no
-training-history endpoint, so the reward curve plots live-observed
-points only. Nothing is mocked to look finished: tools and routes
+**Do not do:** auth, paid compute, production deploys, training
+resume, job logs/resource usage, scenario comparison, or a
+department/tasks model. The Studios do not fake what the backend
+lacks: there is no training resume, no logs/resource-usage endpoint,
+and the episode/evaluation pickers are not yet wired to the new list
+endpoints. Nothing is mocked to look finished: tools and routes
 that cannot run for real say `not_implemented` with the reason.
 
 ## Contributing

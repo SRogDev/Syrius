@@ -23,6 +23,7 @@ export default defineConfig({
       ],
       sidebar: [
         { label: 'Getting started', link: '/getting-started/' },
+        { label: 'Operations', link: '/operations/' },
         {
           label: 'Architecture',
           items: [

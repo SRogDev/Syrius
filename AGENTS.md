@@ -87,3 +87,10 @@ tests/         Reserved for future end-to-end tests
 - Phase 0 worker tests assumed no database exists; CI runs a Postgres
   service, so they force an unreachable `DATABASE_URL` (closed port)
   instead of relying on the environment.
+- The worker test suite has **4 tests** (2 status/heartbeat + 2
+  run-loop) — an earlier STATUS.md line said "6/6"; that was wrong.
+- `/tmp` on this VM is a 512 MB tmpfs and fills fast (a full clone
+  needs ~1.5 GB with venv + node_modules) — do clean-clone checks
+  under `~/workspace/`, never `/tmp`.
+- First `uvicorn` start takes 15–30 s (torch/SB3 import); a curl at
+  8 s will fail with 000 — wait before concluding the API is down.

@@ -1,7 +1,7 @@
 ---
 
 title: Architecture
-description: How the Syrius monorepo is put together (Phases 0–6).
+description: How the Syrius monorepo is put together (Phases 0–7).
 ---
 
 ## Monorepo layout
@@ -37,7 +37,7 @@ package, landed with Phases 1–6.
 
 ## Services
 
-| Service  | Entry point                             | Responsibility (Phases 0–6)                                                                                                                                                                                           |
+| Service  | Entry point                             | Responsibility (Phases 0–7)                                                                                                                                                                                           |
 | -------- | --------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | web      | `apps/web`                              | SPA shell + Four Studios: Project (`/projects/$projectId?studio=`), Environment (`/episodes/$episodeId`), Experiment (`/experiments/$experimentId`), Evaluation (`/evaluations/$evaluationId`), live API health panel |
 | api      | `apps/api/src/syrius_api/main.py`       | Health + full `/api/v1/` (projects, specs, envs, experiments, eval, policies)                                                                                                                                         |
@@ -67,9 +67,12 @@ never trains inside a request handler.
 
 ## What is not built yet
 
-Auth and hardening (Phase 7) belong to later phases. The Studios
-surface the backend's honest gaps in the UI (no list endpoints for
-experiments/episodes/evaluations, no training resume, no artifact
-download, no training-history endpoint). See
-`IMPLEMENTATION_STATUS.md` at the repo root for the honest per-item
-state.
+Auth is not built. The Phase 7 hardening pass is done: the API now
+has list endpoints for experiments/episodes/evaluations, a
+training-history endpoint (persisted metrics.csv), artifact download,
+and a traversal guard on storage paths; the Experiment Studio chart
+plots persisted history + live points and the Deliverables tab
+downloads the package zip. Still missing: training resume,
+logs/resource usage, scenario comparison, a department/tasks model.
+See `IMPLEMENTATION_STATUS.md` at the repo root for the honest
+per-item state.
