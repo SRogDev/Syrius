@@ -313,9 +313,14 @@ export async function validateEnvironment(
 
 // --- Experiments / training (Experiment Factory) -----------------------------
 
-/** NOTE: the backend has no list-experiments endpoint; experiments are
- * opened by id (from a training workflow, a create response, or a
- * pasted id). */
+/** Phase 7: list experiments, optionally filtered by project. */
+export async function listExperiments(
+  projectId?: string,
+): Promise<Experiment[]> {
+  const query = projectId ? `?project_id=${encodeURIComponent(projectId)}` : '';
+  return apiFetch<Experiment[]>(`/api/v1/experiments${query}`);
+}
+
 export async function createExperiment(input: {
   project_id: string;
   environment_id: string;
@@ -365,6 +370,28 @@ export async function getExperimentMetrics(
   return apiFetch<MetricsOut>(`/api/v1/experiments/${experimentId}/metrics`);
 }
 
+/** Phase 7: persisted training history — the metrics.csv rows of the
+ * latest training run (timestep / mean episode reward). */
+export interface TrainingHistoryPoint {
+  timestep: number;
+  mean_episode_reward: number | null;
+}
+
+export interface TrainingHistory {
+  experiment_id: string;
+  training_run_id: string | null;
+  status: string;
+  points: TrainingHistoryPoint[];
+}
+
+export async function getTrainingHistory(
+  experimentId: string,
+): Promise<TrainingHistory> {
+  return apiFetch<TrainingHistory>(
+    `/api/v1/experiments/${experimentId}/history`,
+  );
+}
+
 export async function evaluateExperiment(
   experimentId: string,
   input: {
@@ -392,8 +419,16 @@ export async function listCheckpoints(
 
 // --- Evaluations ------------------------------------------------------------
 
-/** NOTE: the backend has no list-evaluations endpoint; evaluation runs
- * are opened by id (from an evaluate response or a pasted id). */
+/** Phase 7: list evaluation runs, optionally filtered by experiment. */
+export async function listEvaluations(
+  experimentId?: string,
+): Promise<EvaluationRun[]> {
+  const query = experimentId
+    ? `?experiment_id=${encodeURIComponent(experimentId)}`
+    : '';
+  return apiFetch<EvaluationRun[]>(`/api/v1/evaluations${query}`);
+}
+
 export async function getEvaluation(
   evaluationId: string,
 ): Promise<EvaluationRun> {
@@ -414,8 +449,14 @@ export async function listEvaluationSuites(): Promise<EvaluationSuite[]> {
 
 // --- Episodes ---------------------------------------------------------------
 
-/** NOTE: the backend has no list-episodes endpoint; episodes are opened
- * by id (from a RecordEpisode tool result or a pasted id). */
+/** Phase 7: list recorded episodes, optionally filtered by environment. */
+export async function listEpisodes(environmentId?: string): Promise<Episode[]> {
+  const query = environmentId
+    ? `?environment_id=${encodeURIComponent(environmentId)}`
+    : '';
+  return apiFetch<Episode[]>(`/api/v1/episodes${query}`);
+}
+
 export async function getEpisode(episodeId: string): Promise<Episode> {
   return apiFetch<Episode>(`/api/v1/episodes/${episodeId}`);
 }
@@ -468,6 +509,28 @@ export async function getArtifact(
   artifactId: string,
 ): Promise<Record<string, unknown>> {
   return apiFetch<Record<string, unknown>>(`/api/v1/artifacts/${artifactId}`);
+}
+
+/** Phase 7: download an artifact's bytes (e.g. the delivery package
+ * zip) as a Blob. */
+export async function downloadArtifact(artifactId: string): Promise<Blob> {
+  let response: Response;
+  try {
+    response = await fetch(
+      `${apiBase()}/api/v1/artifacts/${artifactId}/download`,
+    );
+  } catch {
+    throw new Error(
+      `API unreachable — is the API running on :8000? (/api/v1/artifacts/${artifactId}/download)`,
+    );
+  }
+  if (!response.ok) {
+    throw new ApiError(
+      response.status,
+      `Artifact download failed: ${response.status}`,
+    );
+  }
+  return response.blob();
 }
 
 // --- Jobs -------------------------------------------------------------------

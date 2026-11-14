@@ -3,7 +3,6 @@ import { useState } from 'react';
 import {
   ApiErrorBox,
   Loading,
-  NotImplemented,
   Panel,
   SectionTitle,
   Stat,
@@ -11,6 +10,7 @@ import {
 } from '#/components/ui';
 import {
   createPolicy,
+  downloadArtifact,
   exportPolicy,
   getJob,
   getPolicy,
@@ -19,9 +19,8 @@ import {
 
 /** Project Studio — Deliverables / Deployment Factory tab.
  * Policy lookup, reproducibility manifest display, export wired to
- * POST /api/v1/policies/{id}/export with job polling. The delivery
- * package download is honestly unavailable: the API serves artifact
- * metadata only, not artifact bytes. */
+ * POST /api/v1/policies/{id}/export with job polling, and package
+ * download via GET /artifacts/{id}/download (Phase 7). */
 
 export default function DeliverablesPanel({
   projectId,
@@ -80,6 +79,33 @@ export default function DeliverablesPanel({
     onError: (error: unknown) =>
       setMessage(
         error instanceof Error ? error.message : 'Could not start the export.',
+      ),
+  });
+
+  // Phase 7: download the exported package zip once the export job
+  // completed; the artifact id comes from the job result.
+  const packageArtifactId =
+    job.data?.status === 'completed'
+      ? (job.data.result as Record<string, unknown>)?.artifact_id
+      : undefined;
+  const downloadMut = useMutation({
+    mutationFn: async () => {
+      if (typeof packageArtifactId !== 'string') {
+        throw new Error('No package artifact yet — export first.');
+      }
+      const blob = await downloadArtifact(packageArtifactId);
+      const url = URL.createObjectURL(blob);
+      const anchor = document.createElement('a');
+      anchor.href = url;
+      anchor.download = 'policy-package.zip';
+      anchor.click();
+      URL.revokeObjectURL(url);
+    },
+    onError: (error: unknown) =>
+      setMessage(
+        error instanceof Error
+          ? error.message
+          : 'Could not download the package.',
       ),
   });
 
@@ -188,12 +214,27 @@ export default function DeliverablesPanel({
           <p className="mt-3 text-sm text-muted">
             Export enqueues a job (the browser never packages a model). When the
             job completes, the package (final_model.zip + manifest.json +
-            README.md) exists in artifact storage.
+            README.md) exists in artifact storage — download it below.
           </p>
-          <NotImplemented
-            what="Delivery package download"
-            reason="The API serves artifact metadata (GET /artifacts/{id}) but no artifact bytes endpoint exists in v0.1, so the browser cannot download the zip yet. The manifest above and the export job status are the real, verifiable surface."
-          />
+          <div className="mt-4">
+            <button
+              type="button"
+              onClick={() => downloadMut.mutate()}
+              disabled={
+                typeof packageArtifactId !== 'string' || downloadMut.isPending
+              }
+              className="h-10 cursor-pointer border border-highlight bg-highlight px-4 font-mono text-xs uppercase tracking-widest text-bg transition-colors duration-150 hover:bg-platinum disabled:opacity-50"
+            >
+              {downloadMut.isPending
+                ? 'Downloading…'
+                : 'Download delivery package (.zip)'}
+            </button>
+            {typeof packageArtifactId !== 'string' ? (
+              <p className="mt-2 font-mono text-xs text-muted">
+                Download unlocks when the export job completes.
+              </p>
+            ) : null}
+          </div>
         </Panel>
       ) : null}
     </div>

@@ -2,8 +2,13 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import {
   ApiError,
   createProject,
+  downloadArtifact,
   fetchHealth,
   getEpisodeTrace,
+  getTrainingHistory,
+  listEpisodes,
+  listEvaluations,
+  listExperiments,
   listProjects,
 } from './api';
 
@@ -88,5 +93,73 @@ describe('api client', () => {
       '/api/v1/episodes/e1/trace',
       expect.anything(),
     );
+  });
+
+  it('lists experiments, filtered by project when given', async () => {
+    const experiments = [{ id: 'x1', name: 'ppo-1' }];
+    (fetch as unknown as ReturnType<typeof vi.fn>).mockImplementation(() =>
+      Promise.resolve(jsonResponse(experiments)),
+    );
+    await expect(listExperiments('p1')).resolves.toEqual(experiments);
+    expect(fetch).toHaveBeenCalledWith(
+      '/api/v1/experiments?project_id=p1',
+      expect.anything(),
+    );
+    await expect(listExperiments()).resolves.toEqual(experiments);
+    expect(fetch).toHaveBeenCalledWith(
+      '/api/v1/experiments',
+      expect.anything(),
+    );
+  });
+
+  it('lists evaluations filtered by experiment', async () => {
+    const runs = [{ id: 'ev1', status: 'completed' }];
+    (fetch as unknown as ReturnType<typeof vi.fn>).mockResolvedValue(
+      jsonResponse(runs),
+    );
+    await expect(listEvaluations('x1')).resolves.toEqual(runs);
+    expect(fetch).toHaveBeenCalledWith(
+      '/api/v1/evaluations?experiment_id=x1',
+      expect.anything(),
+    );
+  });
+
+  it('lists episodes filtered by environment', async () => {
+    const episodes = [{ id: 'ep1', length: 22 }];
+    (fetch as unknown as ReturnType<typeof vi.fn>).mockResolvedValue(
+      jsonResponse(episodes),
+    );
+    await expect(listEpisodes('env1')).resolves.toEqual(episodes);
+    expect(fetch).toHaveBeenCalledWith(
+      '/api/v1/episodes?environment_id=env1',
+      expect.anything(),
+    );
+  });
+
+  it('fetches training history points', async () => {
+    const history = {
+      experiment_id: 'x1',
+      training_run_id: 'r1',
+      status: 'completed',
+      points: [{ timestep: 512, mean_episode_reward: 21.5 }],
+    };
+    (fetch as unknown as ReturnType<typeof vi.fn>).mockResolvedValue(
+      jsonResponse(history),
+    );
+    await expect(getTrainingHistory('x1')).resolves.toEqual(history);
+    expect(fetch).toHaveBeenCalledWith(
+      '/api/v1/experiments/x1/history',
+      expect.anything(),
+    );
+  });
+
+  it('downloads artifact bytes as a Blob', async () => {
+    const blob = new Blob(['fake-zip'], { type: 'application/octet-stream' });
+    (fetch as unknown as ReturnType<typeof vi.fn>).mockResolvedValue(
+      new Response(blob, { status: 200 }),
+    );
+    const result = await downloadArtifact('a1');
+    expect(result).toBeInstanceOf(Blob);
+    expect(fetch).toHaveBeenCalledWith('/api/v1/artifacts/a1/download');
   });
 });

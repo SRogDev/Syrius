@@ -15,7 +15,8 @@ import {
 } from '#/lib/api';
 
 /** Project Studio — Evaluation tab. Suites are listed for real; runs
- * are opened by id (the backend has no list-evaluations endpoint).
+ * are opened by id. A list-evaluations endpoint exists since Phase 7;
+ * this tab is not wired to it yet.
  * The full Evaluation Studio lives at /evaluations/$id. */
 
 export default function EvaluationPanel({ projectId }: { projectId: string }) {

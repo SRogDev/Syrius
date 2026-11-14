@@ -224,7 +224,7 @@ export default function ProjectOverview({ project }: { project: Project }) {
 
       <NotImplemented
         what="Active tasks, running workflows, experiments, evaluation results and artifacts on this tab"
-        reason="The backend has no list endpoints for tasks, experiments, evaluations or artifacts in v0.1. Use the Environment, Experiments, Evaluation and Deliverables tabs, which open each object by id (from a create response or a pasted id)."
+        reason="The backend has no list endpoints for tasks, workflows or artifacts, and no department model, in v0.1. Experiments, evaluations and episodes now have list endpoints (Phase 7) — open them from the Environment, Experiments, Evaluation and Deliverables tabs, by id or from a create response."
       />
       <p className="font-mono text-xs text-muted">
         <Link

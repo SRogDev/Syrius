@@ -17,6 +17,7 @@ import {
   evaluateExperiment,
   getExperiment,
   getExperimentMetrics,
+  getTrainingHistory,
   listCheckpoints,
   runTool,
   type TrainingConfig,
@@ -183,9 +184,27 @@ function ExperimentStudio() {
   const liveReward = (
     liveMetrics?.metrics as Record<string, unknown> | undefined
   )?.last_mean_episode_reward;
+  // Phase 7: the persisted training history (metrics.csv rows) is the
+  // chart's base series; live SSE points extend it past the last
+  // recorded timestep. Past runs render their real curve on open.
+  const historyQuery = useQuery({
+    queryKey: ['experiment-history', experimentId],
+    queryFn: () => getTrainingHistory(experimentId),
+  });
+  const historyPoints: RewardPoint[] = (historyQuery.data?.points ?? [])
+    .filter((p) => typeof p.mean_episode_reward === 'number')
+    .map((p) => ({
+      step: p.timestep,
+      reward: p.mean_episode_reward as number,
+    }));
+  const lastHistoryStep = historyPoints[historyPoints.length - 1]?.step ?? 0;
+  const mergedPoints: RewardPoint[] = [
+    ...historyPoints,
+    ...points.filter((p) => p.step > lastHistoryStep),
+  ];
   const chartPoints: RewardPoint[] =
-    points.length > 0
-      ? points
+    mergedPoints.length > 0
+      ? mergedPoints
       : liveMetrics && typeof liveReward === 'number'
         ? [{ step: liveMetrics.current_step ?? 0, reward: liveReward }]
         : [];
@@ -338,7 +357,7 @@ function ExperimentStudio() {
           <div className="mt-4">
             <RewardChart
               points={chartPoints}
-              title="Training reward — live points"
+              title="Training reward — persisted history + live points"
             />
           </div>
         </Panel>

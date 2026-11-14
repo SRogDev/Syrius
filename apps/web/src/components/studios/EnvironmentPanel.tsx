@@ -202,9 +202,10 @@ export default function EnvironmentPanel({ projectId }: { projectId: string }) {
       <Panel>
         <SectionTitle>Episode — select or record</SectionTitle>
         <p className="mb-3 text-sm text-platinum">
-          The backend has no list-episodes endpoint: open an episode by id, or
-          record a fresh one from the selected environment (random policy,
-          stored as a trace artifact).
+          Open an episode by id, or record a fresh one from the selected
+          environment (random policy, stored as a trace artifact). A
+          list-episodes endpoint exists since Phase 7; this picker is not wired
+          to it yet.
         </p>
         <div className="flex flex-col gap-3 sm:flex-row sm:items-end">
           <label className="flex-1">

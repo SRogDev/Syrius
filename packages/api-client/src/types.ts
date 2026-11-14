@@ -99,6 +99,11 @@ export interface ApiOperations {
     path: '/api/v1/artifacts/{artifact_id}';
     response: Record<string, unknown>;
   };
+  download_artifact_api_v1_artifacts__artifact_id__download_get: {
+    method: 'get';
+    path: '/api/v1/artifacts/{artifact_id}/download';
+    response: unknown;
+  };
   seed_tools_api_v1_capabilities_seed_tools_post: {
     method: 'post';
     path: '/api/v1/capabilities/seed-tools';
@@ -134,6 +139,11 @@ export interface ApiOperations {
     path: '/api/v1/environments/{env_id}';
     response: Record<string, unknown>;
   };
+  list_episodes_api_v1_episodes_get: {
+    method: 'get';
+    path: '/api/v1/episodes';
+    response: Record<string, unknown>[];
+  };
   get_episode_api_v1_episodes__episode_id__get: {
     method: 'get';
     path: '/api/v1/episodes/{episode_id}';
@@ -147,6 +157,11 @@ export interface ApiOperations {
   list_evaluation_suites_api_v1_evaluation_suites_get: {
     method: 'get';
     path: '/api/v1/evaluation-suites';
+    response: Record<string, unknown>[];
+  };
+  list_evaluations_api_v1_evaluations_get: {
+    method: 'get';
+    path: '/api/v1/evaluations';
     response: Record<string, unknown>[];
   };
   get_evaluation_api_v1_evaluations__evaluation_id__get: {
@@ -163,6 +178,11 @@ export interface ApiOperations {
     method: 'get';
     path: '/api/v1/events';
     response: unknown;
+  };
+  list_experiments_api_v1_experiments_get: {
+    method: 'get';
+    path: '/api/v1/experiments';
+    response: Record<string, unknown>[];
   };
   create_experiment_api_v1_experiments_post: {
     method: 'post';
@@ -193,6 +213,11 @@ export interface ApiOperations {
     method: 'get';
     path: '/api/v1/experiments/{experiment_id}/events';
     response: unknown;
+  };
+  experiment_history_api_v1_experiments__experiment_id__history_get: {
+    method: 'get';
+    path: '/api/v1/experiments/{experiment_id}/history';
+    response: Record<string, unknown>;
   };
   experiment_metrics_api_v1_experiments__experiment_id__metrics_get: {
     method: 'get';
