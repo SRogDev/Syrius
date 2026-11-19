@@ -110,7 +110,7 @@ syrius/
 │   ├── web/        TanStack Start SPA (/, /projects, /projects/$projectId with
 │   │               the Four Studios, /experiments/$id, /episodes/$id,
 │   │               /evaluations/$id)
-│   ├── api/        FastAPI — health + full /api/v1/ routes (42 paths) + Alembic
+│   ├── api/        FastAPI — health + full /api/v1/ routes (44 paths) + Alembic
 │   └── worker/     status / heartbeat CLI + run job loop
 ├── packages/
 │   └── api-client/ OpenAPI-generated TypeScript types
@@ -140,7 +140,7 @@ training via SB3 (never inside a request handler), SSE live progress,
 independent evaluation with success = full 500-step episodes, policy
 packaging/export with a reproducibility manifest and independent
 package validation, 71 department tool definitions, LangGraph training
-workflows, OpenAPI-generated TS client types (42 paths), list
+workflows, OpenAPI-generated TS client types (44 paths), list
 endpoints for experiments/evaluations/episodes, training history from
 persisted metrics.csv, artifact download with sha256 verification,
 and a storage-path traversal guard. Measured on 2026-11-14 (Phase 7
@@ -158,6 +158,16 @@ lacks: there is no training resume, no logs/resource-usage endpoint,
 and the episode/evaluation pickers are not yet wired to the new list
 endpoints. Nothing is mocked to look finished: tools and routes
 that cannot run for real say `not_implemented` with the reason.
+
+**Polygrow integration (2026-11-19, docs only):** per Roger's
+architectural directive, Syrius is the specialized reinforcement-learning
+system inside Polygrow's intelligence infrastructure — Polygrow owns the
+shared compute/orchestration platform, Modal is the only initial remote
+compute provider, and Rustenwer is the complementary model-engineering
+system. See `docs/architecture/cross-system-report.md` and
+`docs/architecture/polygrow-and-rustenwer-integration.md`. No code changed;
+Phases S1–S4 are open work, gated on Roger's decisions (Modal account,
+auth/tenancy).
 
 ## Contributing
 

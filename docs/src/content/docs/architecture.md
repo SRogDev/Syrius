@@ -65,6 +65,44 @@ canonical (Compose + CI), SQLite serves local dev and tests
 (`DATABASE_URL=sqlite:///...`). Long work is always a job — the API
 never trains inside a request handler.
 
+## Polygrow integration & compute (2026-11-19 — Roger's directive)
+
+Roger's architectural directive "Rustenwer & Syrius — Architectural
+Evolution Toward Polygrow's Intelligence Infrastructure" (2026-11-19) sets
+the ecosystem direction. Full audit: `docs/architecture/cross-system-report.md`;
+integration doc: `docs/architecture/polygrow-and-rustenwer-integration.md`.
+
+- **Polygrow is the central intelligence-production platform.** It owns shared
+  infrastructure (orchestration, compute job lifecycle, Modal integration and
+  credentials, tenant identity/authorization, budgets/credits/usage, general
+  artifact infrastructure, Developer API, user-facing experience). Its
+  Intelligence Compute Platform (Spec B) is plan-only as of 2026-11-19: no
+  Modal code, no model registry, no training code, no Developer API in
+  Polygrow yet.
+- **Syrius is the specialized reinforcement-learning system** (environments,
+  simulations, rollouts, policies, RL algorithms, training, evaluation). It
+  keeps its RL domain (`rl.py`, tool registry, independent evaluation,
+  manifest + validated policy package) and exposes it as stable domain
+  operations Polygrow can orchestrate. It does not become a second
+  general-purpose compute platform.
+- **Modal is the only initial remote compute provider.** There is no
+  remote-provider code in this repo today; the only trace is the
+  `"provision_gpu_instance"` string in the `PAID_COMPUTE_ACTIONS` boundary,
+  explicitly not implemented. Do not introduce RunPod, AWS, Kubernetes, or
+  any other remote provider. Local CPU execution stays for local dev,
+  lightweight processing, and tests.
+- **Rustenwer is the complementary specialized system** (model engineering:
+  model creation, adaptation, training, fine-tuning, optimization,
+  evaluation, packaging). The two repos collaborate through explicit
+  artifacts, APIs, or orchestration contracts — never by importing each
+  other's internals, and neither depends on the other to operate.
+- **Integration is additive and compatibility-first.** Adapters around
+  existing behavior; new paths behind flags; old paths deprecated only after
+  equivalence on real workloads. No breaking API/schema changes without
+  migration and rollback. No Modal credentials in this repo, ever. A
+  completed compute job is not an improved policy — independent evaluation
+  stays the arbiter of quality.
+
 ## What is not built yet
 
 Auth is not built. The Phase 7 hardening pass is done: the API now

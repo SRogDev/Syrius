@@ -2,6 +2,29 @@
 
 ## Done
 
+### 2026-11-19 — Architectural evolution toward Polygrow's intelligence infrastructure (docs only, no code)
+
+- Cross-system audit of Polygrow, Syrius, and Rustenwer against Roger's
+  2026-11-19 directive: `docs/architecture/cross-system-report.md`
+  (existing capabilities, duplicated infrastructure, capabilities worth
+  preserving, missing capabilities, integration points, target
+  architecture, backward-compat risks, migration sequence R0–R4/S0–S4,
+  files that should change, features that must remain untouched) +
+  `docs/architecture/polygrow-and-rustenwer-integration.md` (§5.2
+  integration doc) + ownership-boundary section in the Starlight
+  Architecture page (`docs/src/content/docs/architecture.md`).
+- Key decisions recorded: Polygrow owns shared intelligence/compute
+  infrastructure; **Modal is the only initial remote compute provider**
+  (no remote-provider code exists in this repo); Rustenwer is the
+  complementary model-engineering system, collaboration via explicit
+  contracts, no cross-repo imports. Phases S1–S4 are open work, gated on
+  Roger's decisions (Modal account, auth/tenancy).
+- Evidence at audit: API 37/37, worker 4/4, web Vitest 30/30, `ruff`
+  clean.
+- The API route count is **44 paths under `/api/v1/`** (43 `@router`
+  decorators + the v1 health endpoint) — the README's "42 paths" is
+  corrected in the same change.
+
 ### 2026-11-14 — Phase 7: Hardening (v0.1)
 
 - **E2E acceptance** (`scripts/e2e_cartpole.py`, `make e2e`): real API
